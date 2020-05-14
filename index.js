@@ -1,8 +1,10 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const passport = require("passport");
 
 const app = express();
+const users = require("./routes/api/users");
 
 app.use(
   bodyParser.urlencoded({
@@ -13,7 +15,7 @@ app.use(
 app.use(bodyParser.json());
 
 const mongoURI = require("./config/keys").mongoURI;
-console.log(mongoURI);
+
 mongoose
   .connect(mongoURI, {
     useNewUrlParser: true,
@@ -30,6 +32,11 @@ mongoose
       err
     )
   );
+
+app.use(passport.initialize());
+require("./config/passport")(passport);
+
+app.use("/api/users", users);
 
 const port = process.env.PORT || 3000;
 
