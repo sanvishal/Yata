@@ -38,7 +38,7 @@ require("./config/passport")(passport);
 
 app.use("/api/users", users);
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 app.listen(port, () => {
   console.log(`[SER] Server is up and running healthy on port ${port} :)`);
