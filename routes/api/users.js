@@ -60,7 +60,7 @@ router.post("/register", (req, res) => {
 });
 
 router.post("/login", (req, res) => {
-  const { error, isValid } = validators.validateLoginData(req.body);
+  const { errors, isValid } = validators.validateLoginData(req.body);
 
   if (!isValid) {
     return res

@@ -1,0 +1,74 @@
+.container {
+  color: white;
+  margin: 20px 80px 50px 80px;
+}
+
+.form-container {
+  .form-title {
+    text-align: center;
+    font-size: 25px;
+    font-family: "Poppins", monospace;
+    color: white;
+  }
+
+  form {
+    padding: 30px 50px 60px 50px;
+    background: #272b2f;
+    width: 40%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 7px;
+
+    div.field {
+      margin-top: 22px;
+    }
+
+    label {
+      color: white;
+      font-weight: 100;
+    }
+
+    .error {
+      color: $cta-color;
+      opacity: 0.5;
+      position: absolute;
+      width: 100%;
+      display: block;
+      text-align: right;
+      font-size: 15px;
+    }
+
+    input {
+      background-color: $bg-color-dark;
+      border: none;
+      border-bottom: 1px solid rgb(126, 126, 126);
+      border-radius: 0px;
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
+      color: white;
+      transition: all 0.3s ease;
+
+      &:focus {
+        background-color: rgb(29, 29, 29);
+        border: 2px solid rgb(126, 126, 126);
+        border-radius: 5px;
+        outline: none;
+        color: white;
+      }
+
+      &::placeholder {
+        color: rgb(93, 93, 93);
+      }
+    }
+
+    .button {
+      @include button;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 35px;
+    }
+  }
+}

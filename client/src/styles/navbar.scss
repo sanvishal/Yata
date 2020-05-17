@@ -1,0 +1,18 @@
+.navbar {
+  background: $bg-color-dark;
+  padding: 10px 70px 10px 70px;
+  height: 80px;
+  a {
+    height: 100%;
+    img {
+      height: 100%;
+      max-height: none;
+    }
+  }
+  .navbar-item {
+    .button {
+      @include button-dark;
+      margin-left: 16px;
+    }
+  }
+}

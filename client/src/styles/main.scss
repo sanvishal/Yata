@@ -1,0 +1,79 @@
+@charset "utf-8";
+
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,700;1,400&family=Poppins:wght@400;500;700&display=swap");
+
+$bg-color-dark: #212529;
+$bg-color-light: #26292e;
+$cta-color: #fd554f;
+
+body {
+  width: 100%;
+  height: 100vh;
+  background-color: $bg-color-dark;
+  color: white;
+  font-family: "Open Sans", sans-serif !important;
+}
+
+.swal2-popup {
+  background: $bg-color-light !important;
+  box-shadow: none !important;
+  border: 1px solid #3f3f3f;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-bottom-color: $cta-color;
+  border-bottom-width: 2px;
+  .swal2-title {
+    color: #fff !important;
+  }
+  &__success {
+    border-bottom-color: greenyellow !important;
+  }
+}
+
+.button.is-loading::after {
+  left: calc(50% - (1.3em / 2)) !important;
+  top: calc(50% - (1.3em / 2)) !important;
+  border: 4px solid #fff !important;
+  width: 1.3em !important;
+  height: 1.3em !important;
+}
+
+@mixin button-dark {
+  background: $bg-color-light;
+  color: white;
+  box-shadow: 0px 7px 50px -30px rgba(255, 255, 255, 0);
+  top: 0px;
+  border: 1px solid transparent;
+  transition: all 0.3s ease-in-out;
+  &:hover {
+    background: #4c5258;
+    border: 1px solid grey;
+    top: 2px;
+  }
+}
+
+@mixin button {
+  background: $cta-color;
+  color: white;
+  box-shadow: 0px 7px 50px -30px rgba(255, 255, 255, 0);
+  top: 0px;
+  border: 1px solid transparent;
+  font-family: "Poppins", monospace;
+  transition: all 0.3s ease-in-out;
+  &:hover {
+    background-color: $cta-color;
+    top: 2px;
+    border: 1px solid white;
+  }
+}
+
+@import "../node_modules/bulma/sass/utilities/_all.sass";
+@import "../node_modules/bulma/sass/base/_all.sass";
+@import "../node_modules/bulma/sass/components/_all.sass";
+@import "../node_modules/bulma/sass/elements/_all.sass";
+@import "../node_modules/bulma/sass/form/_all.sass";
+@import "../node_modules/bulma/sass/grid/_all.sass";
+@import "../node_modules/bulma/sass/layout/_all.sass";
+
+@import "./navbar.scss";
+@import "./forms.scss";
