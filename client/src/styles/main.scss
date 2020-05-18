@@ -30,6 +30,33 @@ body {
   }
 }
 
+.dropdown-content {
+  background-color: $bg-color-light !important;
+  a {
+    color: #fff !important;
+    border-left: 0px solid $cta-color;
+    color: rgb(202, 202, 202) !important;
+    transition: all 0.1s ease-in-out;
+    &.dropdown-item:hover {
+      background-color: $bg-color-dark;
+      color: #fff !important;
+      border-left: 2px solid $cta-color;
+      svg {
+        color: #fff;
+        transition: all 0.1s ease-in-out;
+      }
+    }
+    span {
+      svg {
+        width: 16px;
+        margin-bottom: -7px;
+        color: grey;
+      }
+      margin-right: 9px;
+    }
+  }
+}
+
 .button.is-loading::after {
   left: calc(50% - (1.3em / 2)) !important;
   top: calc(50% - (1.3em / 2)) !important;
@@ -65,6 +92,15 @@ body {
     top: 2px;
     border: 1px solid white;
   }
+}
+
+@mixin no-select {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 @import "../node_modules/bulma/sass/utilities/_all.sass";

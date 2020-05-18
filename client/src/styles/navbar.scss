@@ -14,5 +14,64 @@
       @include button-dark;
       margin-left: 16px;
     }
+
+    .profile-pic {
+      border-radius: 50%;
+    }
+
+    .dropdown {
+      .dropdown-trigger {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        padding: 8px;
+        margin-right: -10px;
+        border-radius: 4px;
+        @include no-select;
+        .dropdown-icon {
+          margin-top: 6px;
+          margin-left: -15px;
+          opacity: 0;
+          transition: all 0.2s ease-in-out;
+          svg {
+            width: 16px;
+          }
+        }
+        &:hover {
+          background-color: $bg-color-light;
+
+          .dropdown-icon {
+            visibility: visible;
+            opacity: 1;
+            margin-left: 5px;
+            color: rgb(128, 128, 128);
+            svg {
+              width: 16px;
+            }
+          }
+        }
+
+        img {
+          margin-right: 10px;
+        }
+      }
+      &.is-active {
+        .dropdown-trigger {
+          background-color: $bg-color-light;
+          .dropdown-icon {
+            visibility: visible;
+            opacity: 1;
+            margin-left: 5px;
+            color: rgb(128, 128, 128);
+            svg {
+              width: 16px;
+            }
+          }
+        }
+      }
+    }
   }
 }
