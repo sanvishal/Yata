@@ -6,9 +6,13 @@ $bg-color-dark: #212529;
 $bg-color-light: #26292e;
 $cta-color: #fd554f;
 
-body {
+body,
+html {
+  margin: 0;
+  padding: 0;
   width: 100%;
   height: 100vh;
+  overflow: auto !important;
   background-color: $bg-color-dark;
   color: white;
   font-family: "Open Sans", sans-serif !important;
@@ -35,11 +39,9 @@ body {
   a {
     color: #fff !important;
     border-left: 0px solid $cta-color;
-    color: rgb(202, 202, 202) !important;
     transition: all 0.1s ease-in-out;
     &.dropdown-item:hover {
       background-color: $bg-color-dark;
-      color: #fff !important;
       border-left: 2px solid $cta-color;
       svg {
         color: #fff;
@@ -103,13 +105,14 @@ body {
   user-select: none;
 }
 
-@import "../node_modules/bulma/sass/utilities/_all.sass";
-@import "../node_modules/bulma/sass/base/_all.sass";
-@import "../node_modules/bulma/sass/components/_all.sass";
-@import "../node_modules/bulma/sass/elements/_all.sass";
-@import "../node_modules/bulma/sass/form/_all.sass";
-@import "../node_modules/bulma/sass/grid/_all.sass";
-@import "../node_modules/bulma/sass/layout/_all.sass";
+@import "bulma/sass/utilities/_all.sass";
+@import "bulma/sass/base/_all.sass";
+@import "bulma/sass/components/_all.sass";
+@import "bulma/sass/elements/_all.sass";
+@import "bulma/sass/form/_all.sass";
+@import "bulma/sass/grid/_all.sass";
+@import "bulma/sass/layout/_all.sass";
 
 @import "./navbar.scss";
 @import "./forms.scss";
+@import "./workspace.scss";

@@ -1,7 +1,10 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { connect } from "react-redux";
 import Toast from "../ToastNotification";
+import Sidebar from "./Sidebar";
+import MainContent from "./MainContent";
+
+import { connect } from "react-redux";
 
 class Workspace extends Component {
   componentDidMount() {
@@ -16,8 +19,9 @@ class Workspace extends Component {
   render() {
     const { user } = this.props.auth;
     return (
-      <div style={{ height: "75vh" }} className="container valign-wrapper">
-        {user.name}
+      <div className="workspace-container">
+        <Sidebar />
+        <MainContent />
       </div>
     );
   }
