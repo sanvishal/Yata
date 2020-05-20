@@ -25,37 +25,37 @@ router.post("/register", (req, res) => {
         type: "auth",
         message: "This Email seems to be already registered ._.",
       });
-    }
-  });
+    } else {
+      const newUser = new User({
+        name: req.body.name,
+        email: req.body.email,
+        password: req.body.password,
+      });
 
-  const newUser = new User({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-  });
+      bcrypt.genSalt(15, (err, salt) => {
+        bcrypt.hash(newUser.password, salt, (err, hash) => {
+          if (err) {
+            throw console.log(
+              "[AUTH] Something fishy happened while encrypting the password"
+            );
+          }
 
-  bcrypt.genSalt(15, (err, salt) => {
-    bcrypt.hash(newUser.password, salt, (err, hash) => {
-      if (err) {
-        throw console.log(
-          "[AUTH] Something fishy happened while encrypting the password"
-        );
-      }
-
-      newUser.password = hash;
-      newUser
-        .save()
-        .then((user) =>
-          res.json({ status: "success", message: user, type: "auth" })
-        )
-        .catch((err) => {
-          res.status(400).json({
-            type: "auth",
-            message: "Something funky happened, we'll investigate ;_;",
-            staus: "error",
-          });
+          newUser.password = hash;
+          newUser
+            .save()
+            .then((user) =>
+              res.json({ status: "success", message: user, type: "auth" })
+            )
+            .catch((err) => {
+              res.status(400).json({
+                type: "auth",
+                message: "Something funky happened, we'll investigate ;_;",
+                staus: "error",
+              });
+            });
         });
-    });
+      });
+    }
   });
 });
 
@@ -77,40 +77,40 @@ router.post("/login", (req, res) => {
         type: "auth",
         message: "Please register to continue ._.",
       });
-    }
+    } else {
+      bcrypt.compare(password, user.password).then((matches) => {
+        if (matches) {
+          const jwt_payload = {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+          };
 
-    bcrypt.compare(password, user.password).then((matches) => {
-      if (matches) {
-        const jwt_payload = {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-        };
-
-        jsonwebtoken.sign(
-          jwt_payload,
-          keys.serverSecret,
-          {
-            expiresIn: 31247891,
-          },
-          (err, token) => {
-            if (err) {
-              throw console.log(
-                "[AUTH] Something happened at JWT signing ---->\n",
-                err
-              );
+          jsonwebtoken.sign(
+            jwt_payload,
+            keys.serverSecret,
+            {
+              expiresIn: 31247891,
+            },
+            (err, token) => {
+              if (err) {
+                throw console.log(
+                  "[AUTH] Something happened at JWT signing ---->\n",
+                  err
+                );
+              }
+              res.json({ status: "success", token: "Bearer " + token });
             }
-            res.json({ status: "success", token: "Bearer " + token });
-          }
-        );
-      } else {
-        return res.status(400).json({
-          status: "error",
-          type: "auth",
-          message: "Invalid login credentials :(",
-        });
-      }
-    });
+          );
+        } else {
+          return res.status(400).json({
+            status: "error",
+            type: "auth",
+            message: "Invalid login credentials :(",
+          });
+        }
+      });
+    }
   });
 });
 

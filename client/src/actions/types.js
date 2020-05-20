@@ -3,3 +3,5 @@ export const USER_LOADING = "USER_LOADING";
 export const SET_CURRENT_USER = "SET_CURRENT_USER";
 
 export const ADD_PROJECT = "ADD_PROJECT";
+export const PROJECT_LIST = "PROJECT_LIST";
+export const SELECTED_PROJECT = "SELECTED_PROJECT";

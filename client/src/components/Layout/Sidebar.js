@@ -2,7 +2,11 @@ import React, { Component } from "react";
 import { Hash, Plus, Check } from "react-feather";
 import { connect } from "react-redux";
 import Toast from "../ToastNotification";
-import { addProject } from "../../actions/projectActions";
+import {
+  addProject,
+  fetchProjects,
+  setProject,
+} from "../../actions/projectActions";
 
 const getRandomColor = () => {
   let colors = [
@@ -20,28 +24,33 @@ const getRandomColor = () => {
 
 class Sidebar extends Component {
   state = {
-    projects: [
-      {
-        color: "#FFBC26",
-        projectname: "abced",
-      },
-      {
-        color: "#FD413C",
-        projectname: "abjjd",
-      },
-    ],
+    projects: [],
     openCreateProject: false,
     projectname: "",
     color: getRandomColor(),
+    loading: false,
+    fetching: true,
+    currentProject: {},
   };
 
-  ap = async (e) => {
-    await this.props.addProject();
+  _fetchProjects = async () => {
+    await this.props.fetchProjects({
+      id: this.props.auth.user.id,
+    });
+    this.setState({ fetching: false });
+    if (this.props.projects.projects.length) {
+      this.setState({ projects: this.props.projects.projects });
+    }
     console.log(this.props);
   };
 
   componentDidMount() {
-    this.ap(1);
+    this._fetchProjects();
+  }
+
+  setProject(e, idx) {
+    this.setState({ currentProject: this.state.projects[+idx] });
+    this.props.setProject(this.state.projects[+idx]);
     console.log(this.props);
   }
 
@@ -57,24 +66,44 @@ class Sidebar extends Component {
     this.setState({ color: getRandomColor() });
   };
 
+  // componentDidUpdate(prevProps) {
+  //   if (prevProps.errors !== this.props.errors) {
+
+  //   }
+  // }
+
   createProject = async (e) => {
     if (this.state.projectname) {
+      if (this.state.loading) {
+        Toast.fire({
+          title: "Patience is key :)",
+        });
+        return;
+      }
+      this.setState({ loading: true });
       await this.props.addProject({
         id: this.props.auth.user.id,
         projectname: this.state.projectname,
         color: this.state.color,
       });
-      console.log(this.props);
-      let newProjects = [
-        ...this.state.projects,
-        {
-          color: this.state.color,
-          projectname: this.state.projectname,
-        },
-      ];
-      this.setState({ projects: newProjects });
-      this.toggleCreateProject();
-      return;
+      if (Object.keys(this.props.projects.new_project).length) {
+        let newProjects = [
+          ...this.state.projects,
+          {
+            color: this.props.projects.new_project.color,
+            projectname: this.props.projects.new_project.projectname,
+            id: this.props.projects.new_project._id,
+            timestamp: this.props.projects.new_project.date,
+          },
+        ];
+        this.setState({ projects: newProjects, loading: false });
+        this.toggleCreateProject();
+        return;
+      } else {
+        Toast.fire({
+          title: this.props.errors.message,
+        });
+      }
     }
     Toast.fire({
       title: "Enter a valid project name",
@@ -93,11 +122,25 @@ class Sidebar extends Component {
           <div className="sidebar__title">Projects</div>
           <div className="sidebar__projects-list">
             {projects.length ? (
-              projects.map((project) => {
+              projects.map((project, key) => {
                 return (
                   <div
-                    className="sidebar__project"
-                    style={{ borderLeft: "0px solid " + project.color }}
+                    className={
+                      "sidebar__project fadeInLeft" +
+                      (this.state.currentProject.id === project.id
+                        ? " active"
+                        : "")
+                    }
+                    id={key}
+                    style={{
+                      borderLeft: "0px solid " + project.color,
+                      animationDelay: (key / 20 >= 0.7 ? 0.7 : key / 20) + "s",
+                      background:
+                        this.state.currentProject.id === project.id
+                          ? project.color + "10"
+                          : "",
+                    }}
+                    onClick={(e) => this.setProject(e, key)}
                   >
                     <div
                       className="sidebar__project__icon"
@@ -111,19 +154,39 @@ class Sidebar extends Component {
                   </div>
                 );
               })
-            ) : (
-              <div className="sidebar__no-projects">
+            ) : !this.state.fetching ? (
+              <div
+                className="sidebar__no-projects"
+                style={{
+                  display: this.state.openCreateProject ? "none" : "block",
+                }}
+              >
                 No projects :(
                 <div className="sidebar__no-projects__create-project">
                   <a className="button">
-                    <Plus />
+                    <Plus onClick={(e) => this.toggleCreateProject(e)} />
                   </a>
                 </div>{" "}
                 a project
               </div>
+            ) : (
+              <div
+                className="loader"
+                style={{
+                  width: "30px",
+                  height: "30px",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  display: "block",
+                  border: "2px solid #4c5258",
+                  marginTop: "50px",
+                  borderRightColor: "transparent",
+                  borderTopColor: "transparent",
+                }}
+              ></div>
             )}
           </div>
-          {projects.length ? (
+          {projects.length || this.state.openCreateProject ? (
             <div
               className="sidebar__create-project-trigger"
               onClick={(e) => this.toggleCreateProject(e)}
@@ -143,6 +206,7 @@ class Sidebar extends Component {
                   style={{ color: color, backgroundColor: color + "30" }}
                 />
                 <input
+                  disabled={this.state.loading}
                   placeholder="Enter a good project name"
                   onChange={(e) => this.onChangeProjectName(e)}
                 ></input>
@@ -170,8 +234,13 @@ class Sidebar extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  projects: state.projects.projects,
+  projects: state.projects,
   auth: state.auth,
+  errors: state.errors,
 });
 
-export default connect(mapStateToProps, { addProject })(Sidebar);
+export default connect(mapStateToProps, {
+  addProject,
+  fetchProjects,
+  setProject,
+})(Sidebar);

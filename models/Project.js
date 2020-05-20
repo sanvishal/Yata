@@ -6,9 +6,17 @@ const ProjectSchema = new Schema({
     type: String,
     required: true,
   },
+  color: {
+    type: String,
+    default: "#ffffff",
+  },
   date: {
     type: Date,
     default: Date.now,
+  },
+  userid: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
   },
 });
 

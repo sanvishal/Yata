@@ -67,6 +67,31 @@ html {
   height: 1.3em !important;
 }
 
+@keyframes fadeInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0px);
+  }
+}
+
+@mixin fadeInMixin($dir) {
+  @if $dir == "left" {
+    opacity: 0;
+    animation-name: fadeInLeft;
+    animation-duration: 0.7s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+  }
+}
+
+.fadeInLeft {
+  @include fadeInMixin("left");
+}
+
 @mixin button-dark {
   background: $bg-color-light;
   color: white;
