@@ -40,6 +40,7 @@ class Sidebar extends Component {
     this.setState({ fetching: false });
     if (this.props.projects.projects.length) {
       this.setState({ projects: this.props.projects.projects });
+      this.setProject(null, 0);
     }
     console.log(this.props);
   };

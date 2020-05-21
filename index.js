@@ -4,8 +4,10 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 const cors = require("cors");
 const app = express();
+
 const users = require("./routes/api/users");
 const projects = require("./routes/api/projects");
+const todos = require("./routes/api/todos");
 
 app.use(function (req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -56,6 +58,7 @@ require("./config/passport")(passport);
 
 app.use("/api/users", users);
 app.use("/api/projects", projects);
+app.use("/api/todos", todos);
 
 const port = process.env.PORT || 8080;
 

@@ -16,7 +16,7 @@ const ProjectSchema = new Schema({
   },
   userid: {
     type: Schema.Types.ObjectId,
-    ref: "User",
+    ref: "users",
   },
 });
 
