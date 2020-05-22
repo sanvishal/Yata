@@ -186,13 +186,34 @@
         width: 20px;
         height: 20px;
         stroke-width: 2px;
+        margin-bottom: -4px;
+        margin-right: 7px;
       }
       transition: all 0.2s ease-in-out;
+      font-weight: 900;
 
       &:hover {
         background-color: rgba(253, 65, 60, 0.7);
         color: white;
       }
+    }
+  }
+
+  .projects-accumulator {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    align-items: center;
+    align-content: center;
+
+    .project-badge {
+      margin-bottom: 4px;
+      padding-left: 6px;
+      padding-right: 6px;
+      font-size: 14px;
+      border-radius: 3px;
+      margin-left: 5px;
     }
   }
 }
@@ -237,6 +258,10 @@
 
   &__navigation button:enabled:focus {
     background-color: #4c5258;
+  }
+
+  &__month-view__days__day--neighboringMonth {
+    opacity: 0.4;
   }
 }
 .react-calendar__month-view__days__day--weekend {
