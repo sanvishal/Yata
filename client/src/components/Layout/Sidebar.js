@@ -7,20 +7,7 @@ import {
   fetchProjects,
   setProject,
 } from "../../actions/projectActions";
-
-const getRandomColor = () => {
-  let colors = [
-    "#FFBC26",
-    "#FD413C",
-    "#2D9CFC",
-    "#ffffff",
-    "#6DACCB",
-    "#894FC6",
-    "#F934A4",
-    "#36D9D8",
-  ];
-  return colors[Math.floor(Math.random() * colors.length)];
-};
+import getRandomColor from "../../utils/getRandomColor";
 
 class Sidebar extends Component {
   state = {
@@ -42,7 +29,6 @@ class Sidebar extends Component {
       this.setState({ projects: this.props.projects.projects });
       this.setProject(null, 0);
     }
-    console.log(this.props);
   };
 
   componentDidMount() {
@@ -67,11 +53,11 @@ class Sidebar extends Component {
     this.setState({ color: getRandomColor() });
   };
 
-  // componentDidUpdate(prevProps) {
-  //   if (prevProps.errors !== this.props.errors) {
-
-  //   }
-  // }
+  componentDidUpdate(prevProps) {
+    if (prevProps.projects.new_project !== this.props.projects.new_project) {
+      this._fetchProjects();
+    }
+  }
 
   createProject = async (e) => {
     if (this.state.projectname) {

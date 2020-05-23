@@ -228,6 +228,11 @@
   button {
     color: white;
 
+    &:disabled {
+      background: #4c5258;
+      opacity: 0.5;
+    }
+
     &:hover {
       background-color: #4c5258 !important;
     }
@@ -268,6 +273,12 @@
   color: $cta-color !important;
 
   &.react-calendar__tile--active {
+    color: white !important;
+  }
+}
+
+.react-calendar__tile--now {
+  &.react-calendar__month-view__days__day--weekend {
     color: white !important;
   }
 }

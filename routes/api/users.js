@@ -9,7 +9,7 @@ const User = require("../../models/User");
 
 const router = express.Router();
 
-router.use(function (req, res, next) {
+router.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Methods",

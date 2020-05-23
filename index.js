@@ -9,7 +9,7 @@ const users = require("./routes/api/users");
 const projects = require("./routes/api/projects");
 const todos = require("./routes/api/todos");
 
-// app.use(function (req, res, next) {
+// app.use((req, res, next) => {
 //   res.setHeader("Access-Control-Allow-Origin", "*");
 //   res.setHeader(
 //     "Access-Control-Allow-Methods",
@@ -17,19 +17,11 @@ const todos = require("./routes/api/todos");
 //   );
 //   res.setHeader(
 //     "Access-Control-Allow-Headers",
-//     "X-Requested-With,content-type,content-encoding,x-access-token"
+//     "Content-Type,Access-Control-Allow-Headers,x-access-token"
 //   );
 //   res.setHeader("Access-Control-Allow-Credentials", true);
 //   next();
 // });
-var allowCrossDomain = function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
-
-  next();
-};
-app.use(cors({ credentials: true, origin: true }));
 
 app.use(
   bodyParser.urlencoded({
@@ -38,6 +30,13 @@ app.use(
 );
 
 app.use(bodyParser.json());
+
+app.use(
+  cors({
+    credentials: true,
+    origin: true,
+  })
+);
 
 const mongoURI = require("./config/keys").mongoURI;
 

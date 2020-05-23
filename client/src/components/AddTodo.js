@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { addTodo } from "../actions/todoActions";
+import { addProject } from "../actions/projectActions";
 import onclickoutside from "react-onclickoutside";
+import Toast from "./ToastNotification";
 import {
   ChevronDown,
   MinusCircle,
@@ -13,6 +15,7 @@ import {
 } from "react-feather";
 import Calendar from "react-calendar";
 import moment from "moment";
+import getRandomColor from "../utils/getRandomColor";
 import "react-calendar/dist/Calendar.css";
 
 function extractProjects(str) {
@@ -78,7 +81,7 @@ class AddTodo extends Component {
         projects = removeItemAll(projects, "#" + project.projectname);
         linkedProjects.push({
           projectname: project.projectname,
-          id: project.id,
+          projectid: project.id,
         });
       }
     });
@@ -86,8 +89,8 @@ class AddTodo extends Component {
     projects.forEach((project) => {
       newProjects[project] = "#ffffff";
       linkedProjects.push({
-        projectname: project.projectname,
-        id: "",
+        projectname: project,
+        projectid: "",
       });
     });
     this.setState({
@@ -95,10 +98,6 @@ class AddTodo extends Component {
       projects: newProjects,
       linkedProjects,
     });
-  }
-
-  componentDidUpdate() {
-    console.log(this.props);
   }
 
   componentDidUpdate(prevProps) {
@@ -114,7 +113,7 @@ class AddTodo extends Component {
         linkedProjects: [
           {
             projectname: selectedProject.projectname,
-            id: selectedProject.id,
+            projectid: selectedProject.id,
           },
         ],
       });
@@ -132,6 +131,45 @@ class AddTodo extends Component {
   setStatus(e, status) {
     this.setState({ status: status });
   }
+
+  addNonExistingProjects = async () => {
+    let newLinkedProjects = this.state.linkedProjects;
+    for (let project of newLinkedProjects) {
+      if (!project.projectid) {
+        await this.props.addProject({
+          projectname: project.projectname.substring(1),
+          id: this.props.auth.user.id,
+          color: getRandomColor(),
+        });
+        project.projectid = this.props.projects.new_project._id;
+      }
+    }
+    this.setState({
+      linkedProjects: newLinkedProjects,
+    });
+  };
+
+  _addTodo = async (e) => {
+    if (this.state.task) {
+      await this.addNonExistingProjects();
+      let todoData = {
+        id: this.props.auth.user.id,
+        task: this.state.task,
+        projects: this.state.linkedProjects,
+        status: this.state.status,
+      };
+      if (this.state.status !== 2) {
+        todoData = { ...todoData, deadline: this.state.deadline };
+      }
+
+      //await this.props.addTodo(todoData);
+      console.log(this.props.projects);
+    } else {
+      Toast.fire({
+        title: "Enter a task!",
+      });
+    }
+  };
 
   onChangeDate(date) {
     let selectedDate = fixTimeAccuracy(new Date(date));
@@ -270,6 +308,7 @@ class AddTodo extends Component {
           <div
             className="todo-buttons__deadline"
             onClick={(e) => this.toggleCalender(e)}
+            style={{ display: this.state.status === 2 ? "none" : "block" }}
           >
             <Cal />
             {this.state.deadline ? (
@@ -278,14 +317,26 @@ class AddTodo extends Component {
               <span>Set Deadline</span>
             )}
           </div>
-          <div className="todo-buttons__add-todo">
+          <div
+            className="todo-buttons__add-todo"
+            onClick={(e) => this._addTodo(e)}
+          >
             <span>Add</span>
             <Check />
           </div>
         </div>
         {this.state.calendarOpen ? (
           <div className="calender-select">
-            <Calendar onChange={(date) => this.onChangeDate(date)} />
+            <Calendar
+              onChange={(date) => this.onChangeDate(date)}
+              minDate={
+                new Date(
+                  new Date().getFullYear(),
+                  new Date().getMonth(),
+                  new Date().getDate()
+                )
+              }
+            />
           </div>
         ) : (
           <></>
@@ -301,4 +352,6 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { addTodo })(onclickoutside(AddTodo));
+export default connect(mapStateToProps, { addTodo, addProject })(
+  onclickoutside(AddTodo)
+);

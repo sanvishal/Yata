@@ -35,9 +35,11 @@ export const addProject = (projectData) => async (dispatch) => {
 
 export const fetchProjects = (userdata) => async (dispatch) => {
   var config = {
+    withCredentials: true,
     headers: {
-      "x-access-token": localStorage.getItem("JWT"),
+      Accept: "application/json",
       "Content-Type": "application/json",
+      "x-access-token": localStorage.getItem("JWT"),
     },
   };
 
