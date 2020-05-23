@@ -67,6 +67,43 @@ html {
   height: 1.3em !important;
 }
 
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f110;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: grey;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+// @mixin styleScroll {
+//   ::-webkit-scrollbar {
+//     width: 6px;
+//     margin-right: 3px;
+//   }
+
+//   ::-webkit-scrollbar-track {
+//     background: #f1f1f110;
+//   }
+
+//   ::-webkit-scrollbar-thumb {
+//     background: grey;
+//   }
+
+//   ::-webkit-scrollbar-thumb:hover {
+//     background: #555;
+//   }
+// }
+
 @keyframes fadeInLeft {
   0% {
     opacity: 0;

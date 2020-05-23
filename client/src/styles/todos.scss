@@ -1,5 +1,5 @@
 .todo-container {
-  width: 80%;
+  width: 90%;
   height: 100px;
   margin-left: auto;
   margin-right: auto;
@@ -280,5 +280,60 @@
 .react-calendar__tile--now {
   &.react-calendar__month-view__days__day--weekend {
     color: white !important;
+  }
+}
+
+.todo-list-container {
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  margin-left: auto;
+  margin-right: auto;
+  &__todo {
+    margin-bottom: 5px;
+    padding: 15px;
+    color: white;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      background-color: $bg-color-light;
+      border-radius: 5px;
+    }
+
+    svg {
+      width: 22px;
+      height: 22px;
+      color: grey;
+      stroke-width: 2px;
+      margin-right: 10px;
+      margin-top: 4px;
+      cursor: pointer;
+
+      &.todo {
+        color: grey;
+      }
+
+      &.doing {
+        color: rgb(255, 188, 38);
+      }
+
+      &.done {
+        color: greenyellow;
+      }
+    }
+
+    .loader {
+      margin-right: 10px;
+      width: 22px;
+      height: 22px;
+      margin-bottom: 5px;
+      margin-top: 5px;
+    }
   }
 }

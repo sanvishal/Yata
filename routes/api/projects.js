@@ -10,8 +10,6 @@ const User = require("../../models/User");
 const router = express.Router();
 
 router.use(function (req, res, next) {
-  console.log("header", res.getHeader("Access-Control-Allow-Headers"));
-  console.log(req.headers["x-access-token"]);
   var token = req.headers["x-access-token"].split(" ")[1];
 
   if (!token) {

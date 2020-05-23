@@ -38,7 +38,7 @@ class Sidebar extends Component {
   setProject(e, idx) {
     this.setState({ currentProject: this.state.projects[+idx] });
     this.props.setProject(this.state.projects[+idx]);
-    console.log(this.props);
+    // console.log(this.props);
   }
 
   toggleCreateProject = (e) => {

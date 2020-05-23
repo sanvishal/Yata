@@ -19,17 +19,24 @@ export const addProject = (projectData) => async (dispatch) => {
   await axios
     .post(getPath("/api/projects/addproject"), projectData, config)
     .then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       dispatch({
         type: ADD_PROJECT,
         payload: res.data.message,
       });
     })
     .catch((err) => {
-      dispatch({
-        type: GET_ERRORS,
-        payload: { message: err.response.data.message, timestamp: Date.now() },
-      });
+      if (typeof err === "object") {
+        dispatch({
+          type: GET_ERRORS,
+          payload: {
+            message: err.response.data.message,
+            timestamp: Date.now(),
+          },
+        });
+      } else {
+        console.log(err);
+      }
     });
 };
 
@@ -46,18 +53,24 @@ export const fetchProjects = (userdata) => async (dispatch) => {
   await axios
     .post(getPath("/api/projects/getprojects"), userdata, config)
     .then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       dispatch({
         type: PROJECT_LIST,
         payload: res.data.message,
       });
     })
     .catch((err) => {
-      console.log(err);
-      dispatch({
-        type: GET_ERRORS,
-        payload: { message: err.response.data.message, timestamp: Date.now() },
-      });
+      if (typeof err === "object") {
+        dispatch({
+          type: GET_ERRORS,
+          payload: {
+            message: err.response.data.message,
+            timestamp: Date.now(),
+          },
+        });
+      } else {
+        console.log(err);
+      }
     });
 };
 

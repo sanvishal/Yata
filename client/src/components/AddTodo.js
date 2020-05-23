@@ -6,7 +6,6 @@ import onclickoutside from "react-onclickoutside";
 import Toast from "./ToastNotification";
 import {
   ChevronDown,
-  MinusCircle,
   CheckCircle,
   Circle,
   PlayCircle,
@@ -70,7 +69,7 @@ class AddTodo extends Component {
   }
 
   onChangeTask(e) {
-    console.log(this.state.projects);
+    // console.log(this.state.projects);
     let projects = extractProjects(e.target.value),
       newProjects = {},
       linkedProjects = [];
@@ -89,7 +88,7 @@ class AddTodo extends Component {
     projects.forEach((project) => {
       newProjects[project] = "#ffffff";
       linkedProjects.push({
-        projectname: project,
+        projectname: project.substring(1),
         projectid: "",
       });
     });
@@ -162,8 +161,8 @@ class AddTodo extends Component {
         todoData = { ...todoData, deadline: this.state.deadline };
       }
 
-      //await this.props.addTodo(todoData);
-      console.log(this.props.projects);
+      await this.props.addTodo(todoData);
+      // console.log(this.props.projects);
     } else {
       Toast.fire({
         title: "Enter a task!",
