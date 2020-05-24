@@ -115,6 +115,17 @@ html {
   }
 }
 
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
 @mixin fadeInMixin($dir) {
   @if $dir == "left" {
     opacity: 0;
@@ -123,10 +134,22 @@ html {
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
   }
+
+  @if $dir == "up" {
+    opacity: 0;
+    animation-name: fadeInUp;
+    animation-duration: 0.7s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+  }
 }
 
 .fadeInLeft {
   @include fadeInMixin("left");
+}
+
+.fadeInUp {
+  @include fadeInMixin("up");
 }
 
 @mixin button-dark {

@@ -9,3 +9,5 @@ export const SELECTED_PROJECT = "SELECTED_PROJECT";
 export const ADD_TODO = "ADD_TODO";
 export const GET_TODOS = "GET_TODOS";
 export const SET_TODO_STATUS = "SET_TODO_STATUS";
+
+export const SELECTED_MODE = "SELECTED_MODE";

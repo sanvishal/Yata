@@ -1,8 +1,14 @@
-import { ADD_PROJECT, PROJECT_LIST, SELECTED_PROJECT } from "../actions/types";
+import {
+  ADD_PROJECT,
+  PROJECT_LIST,
+  SELECTED_PROJECT,
+  SELECTED_MODE,
+} from "../actions/types";
 
 let initialState = {
   new_project: {},
   projects: [],
+  selectedMode: "",
   selectedProject: {},
 };
 
@@ -24,6 +30,12 @@ export default function (state = initialState, action) {
       return {
         ...state,
         selectedProject: action.payload,
+      };
+
+    case SELECTED_MODE:
+      return {
+        ...state,
+        selectedMode: action.payload,
       };
     default:
       return state;

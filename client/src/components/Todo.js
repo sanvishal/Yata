@@ -40,11 +40,10 @@ class Todo extends Component {
       this._setStatus(id, 2);
     }
   }
-
   render() {
     const { task, id } = this.props;
     return (
-      <div className="todo-list-container__todo">
+      <div className={"todo-list-container__todo"}>
         <Reward
           ref={(ref) => {
             this.reward = ref;
@@ -56,6 +55,7 @@ class Todo extends Component {
             spread: 360,
             startVelocity: 15,
             elementCount: 20,
+            lifetime: 50,
           }}
         >
           {!this.state.loading ? (

@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { Hash, Plus, Check } from "react-feather";
+import { Hash, Plus, Check, Home, Star, Clock } from "react-feather";
 import { connect } from "react-redux";
 import Toast from "../ToastNotification";
 import {
   addProject,
   fetchProjects,
   setProject,
+  setMode,
 } from "../../actions/projectActions";
 import getRandomColor from "../../utils/getRandomColor";
 
@@ -27,7 +28,8 @@ class Sidebar extends Component {
     this.setState({ fetching: false });
     if (this.props.projects.projects.length) {
       this.setState({ projects: this.props.projects.projects });
-      this.setProject(null, 0);
+      //this.setProject(null, 0);
+      this.props.setMode("EVERYTHING");
     }
   };
 
@@ -36,9 +38,9 @@ class Sidebar extends Component {
   }
 
   setProject(e, idx) {
+    this.props.setMode("PROJECTS");
     this.setState({ currentProject: this.state.projects[+idx] });
     this.props.setProject(this.state.projects[+idx]);
-    // console.log(this.props);
   }
 
   toggleCreateProject = (e) => {
@@ -101,12 +103,51 @@ class Sidebar extends Component {
     this.setState({ projectname: e.target.value });
   };
 
+  changeMode(e, mode) {
+    this.props.setMode(mode);
+    console.log(this.props.projects);
+    this.setState({ currentProject: {} });
+  }
+
   render() {
     const { projects, openCreateProject, projectname, color } = this.state;
+    const { selectedMode } = this.props.projects;
     return (
       <div className="sidebar-container">
         <div className="sidebar">
-          <div className="sidebar__title">Projects</div>
+          <div
+            className={
+              "sidebar__title" +
+              (selectedMode === "EVERYTHING" ? " mode__active" : "")
+            }
+            onClick={(e) => this.changeMode(e, "EVERYTHING")}
+          >
+            <Home />
+            <span>Everything</span>
+          </div>
+          <div
+            className={
+              "sidebar__title" +
+              (selectedMode === "TODAY" ? " mode__active" : "")
+            }
+            onClick={(e) => this.changeMode(e, "TODAY")}
+          >
+            <Star />
+            <span>Today</span>
+          </div>
+          <div
+            className={
+              "sidebar__title" +
+              (selectedMode === "TOMORROW" ? " mode__active" : "")
+            }
+            onClick={(e) => this.changeMode(e, "TOMORROW")}
+          >
+            <Clock />
+            <span>Tomorrow</span>
+          </div>
+          <div className="sidebar__title">
+            <span>Tags</span>
+          </div>
           <div className="sidebar__projects-list">
             {projects.length ? (
               projects.map((project, key) => {
@@ -230,4 +271,5 @@ export default connect(mapStateToProps, {
   addProject,
   fetchProjects,
   setProject,
+  setMode,
 })(Sidebar);

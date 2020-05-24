@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { addTodo } from "../actions/todoActions";
+import { addTodo, getTodos } from "../actions/todoActions";
 import { addProject } from "../actions/projectActions";
 import onclickoutside from "react-onclickoutside";
 import Toast from "./ToastNotification";
@@ -101,21 +101,31 @@ class AddTodo extends Component {
 
   componentDidUpdate(prevProps) {
     if (
-      prevProps.projects.selectedProject !== this.props.projects.selectedProject
+      prevProps.projects.selectedProject !==
+        this.props.projects.selectedProject ||
+      prevProps.projects.selectedMode !== this.props.projects.selectedMode
     ) {
-      let project = {};
-      const { selectedProject } = this.props.projects;
-      project["#" + selectedProject.projectname] = selectedProject.color;
-      this.setState({
-        projects: project,
-        task: "#" + selectedProject.projectname,
-        linkedProjects: [
-          {
-            projectname: selectedProject.projectname,
-            projectid: selectedProject.id,
-          },
-        ],
-      });
+      if (Object.keys(this.props.projects.selectedProject).length) {
+        let project = {};
+        const { selectedProject } = this.props.projects;
+        project["#" + selectedProject.projectname] = selectedProject.color;
+        this.setState({
+          projects: project,
+          task: "#" + selectedProject.projectname,
+          linkedProjects: [
+            {
+              projectname: selectedProject.projectname,
+              projectid: selectedProject.id,
+            },
+          ],
+        });
+      } else if (
+        prevProps.projects.selectedMode !== this.props.projects.selectedMode
+      ) {
+        this.setState({
+          task: "",
+        });
+      }
     }
   }
 
@@ -136,7 +146,7 @@ class AddTodo extends Component {
     for (let project of newLinkedProjects) {
       if (!project.projectid) {
         await this.props.addProject({
-          projectname: project.projectname.substring(1),
+          projectname: project.projectname,
           id: this.props.auth.user.id,
           color: getRandomColor(),
         });
@@ -145,6 +155,13 @@ class AddTodo extends Component {
     }
     this.setState({
       linkedProjects: newLinkedProjects,
+    });
+  };
+
+  fetchTodos = async () => {
+    await this.props.getTodos({
+      id: this.props.auth.user.id,
+      projectid: this.props.projects.selectedProject.id,
     });
   };
 
@@ -162,7 +179,7 @@ class AddTodo extends Component {
       }
 
       await this.props.addTodo(todoData);
-      // console.log(this.props.projects);
+      await this.fetchTodos();
     } else {
       Toast.fire({
         title: "Enter a task!",
@@ -351,6 +368,6 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { addTodo, addProject })(
+export default connect(mapStateToProps, { addTodo, addProject, getTodos })(
   onclickoutside(AddTodo)
 );

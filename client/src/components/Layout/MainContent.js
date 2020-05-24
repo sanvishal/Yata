@@ -18,22 +18,42 @@ class MainContent extends Component {
     if (
       prevProps.projects.selectedProject !== this.props.projects.selectedProject
     ) {
-      this.fetchTodos();
+      if (Object.keys(this.props.projects.selectedProject).length) {
+        this.fetchTodos();
+      }
     }
   }
 
   render() {
     const { todos } = this.props.todos;
-    return (
-      <div className="main-content-container">
-        <AddTodo />
-        <div className="todo-list-container">
-          {todos.map((todo) => {
-            return <Todo task={todo.task} status={todo.status} id={todo._id} />;
-          })}
+    const { selectedMode } = this.props.projects;
+    if (selectedMode === "PROJECTS") {
+      return (
+        <div className="main-content-container">
+          <AddTodo />
+          <div className="todo-list-container">
+            {todos.map((todo, key) => {
+              return (
+                <Todo
+                  task={todo.task}
+                  status={todo.status}
+                  id={todo._id}
+                  className="fadeInUp"
+                  key={key}
+                />
+              );
+            })}
+          </div>
         </div>
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div className="main-content-container">
+          <AddTodo />
+          <div>{selectedMode}</div>
+        </div>
+      );
+    }
   }
 }
 

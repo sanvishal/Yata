@@ -6,6 +6,8 @@ import {
   GET_ERRORS,
   PROJECT_LIST,
   SELECTED_PROJECT,
+  SELECTED_MODE,
+  GET_TODOS,
 } from "./types";
 
 export const addProject = (projectData) => async (dispatch) => {
@@ -42,7 +44,6 @@ export const addProject = (projectData) => async (dispatch) => {
 
 export const fetchProjects = (userdata) => async (dispatch) => {
   var config = {
-    withCredentials: true,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -60,7 +61,7 @@ export const fetchProjects = (userdata) => async (dispatch) => {
       });
     })
     .catch((err) => {
-      if (typeof err === "object") {
+      if (typeof err.response === "object") {
         dispatch({
           type: GET_ERRORS,
           payload: {
@@ -79,6 +80,19 @@ export const setProject = (project) => (dispatch) => {
     dispatch({
       type: SELECTED_PROJECT,
       payload: project,
+    });
+  }
+};
+
+export const setMode = (mode) => (dispatch) => {
+  if (!isEmpty(mode)) {
+    dispatch({
+      type: SELECTED_MODE,
+      payload: mode,
+    });
+    dispatch({
+      type: SELECTED_PROJECT,
+      payload: {},
     });
   }
 };

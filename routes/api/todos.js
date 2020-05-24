@@ -35,7 +35,6 @@ const router = express.Router();
 
 router.post("/addtodo", (req, res) => {
   const { id, task, projects, status, notes, deadline } = req.body;
-
   if (!ObjectId.isValid(id)) {
     return res.status(400).json({
       status: "error",
@@ -95,7 +94,6 @@ router.post("/addtodo", (req, res) => {
 
 router.use("/gettodos", (req, res) => {
   const { id, projectid } = req.body;
-
   if (!ObjectId.isValid(id)) {
     return res.status(400).json({
       status: "error",
@@ -115,21 +113,21 @@ router.use("/gettodos", (req, res) => {
           Todo.find({
             userid: id,
             projects: { $elemMatch: { projectid: projectid } },
-          }).then((todos) => {
-            return res
-              .json({
+          })
+            .then((todos) => {
+              return res.json({
                 status: "success",
                 message: todos,
                 type: "todo",
-              })
-              .catch((err) => {
-                return res.status(500).json({
-                  status: "error",
-                  message: "Internel server error",
-                  type: "todo",
-                });
               });
-          });
+            })
+            .catch((err) => {
+              return res.status(500).json({
+                status: "error",
+                message: "Internel server error",
+                type: "todo",
+              });
+            });
         } else {
           Todo.find({
             userid: id,

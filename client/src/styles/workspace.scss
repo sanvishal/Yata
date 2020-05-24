@@ -15,10 +15,54 @@
       padding: 15px;
       width: inherit !important;
       max-width: inherit !important;
+
       &__title {
-        font-weight: 700;
-        color: rgb(187, 187, 187);
-        font-family: "Poppins", sans-serif;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: left;
+        align-items: center;
+        align-content: center;
+        &:nth-child(4) {
+          margin-top: 40px;
+          font-weight: 700;
+          color: rgb(187, 187, 187);
+          font-family: "Poppins", sans-serif;
+          cursor: default;
+          padding: 0px;
+        }
+
+        &:not(:nth-child(4)) {
+          cursor: pointer;
+          color: rgb(184, 184, 184);
+          font-family: "Poppins", sans-serif;
+          transition: all 0.3s ease-in-out;
+          border-left: 0px solid $cta-color;
+          margin-bottom: 15px;
+          margin-left: -10px;
+          margin-top: 15px;
+          padding: 10px;
+          font-weight: 700;
+          svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 7px;
+            color: rgb(187, 187, 187);
+            margin-bottom: 2px;
+          }
+
+          &:hover {
+            background-color: #3b3f4246;
+            border-left: 2px solid $cta-color;
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+          }
+          &.mode__active {
+            background-color: $bg-color-dark;
+            color: white;
+            border-left: 2px solid $cta-color;
+          }
+        }
       }
 
       &__no-projects {
@@ -40,6 +84,9 @@
       }
 
       &__projects-list {
+        max-height: 45vh;
+        overflow: auto;
+        height: 45vh;
         .sidebar__project {
           color: white;
           margin: 6px 0px 10px 0px;

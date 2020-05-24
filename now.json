@@ -1,0 +1,36 @@
+{
+  "version": 2,
+  "builds": [{ "src": "index.js", "use": "@now/node-server" }],
+  "routes": [
+    {
+      "src": "/api/users/login",
+      "dest": "/index.js",
+      "methods": ["POST", "OPTIONS", "GET"]
+    },
+    {
+      "src": "/api/projects/getprojects",
+      "dest": "/index.js",
+      "methods": ["POST", "OPTIONS", "GET"]
+    },
+    {
+      "src": "/api/projects/addproject",
+      "dest": "/index.js",
+      "methods": ["POST", "OPTIONS", "GET"]
+    },
+    {
+      "src": "/api/todos/addtodo",
+      "dest": "/index.js",
+      "methods": ["POST", "OPTIONS", "GET"]
+    },
+    {
+      "src": "/api/todos/gettodos",
+      "dest": "/index.js",
+      "methods": ["POST", "OPTIONS", "GET"]
+    },
+    {
+      "src": "/api/todos/setstatus",
+      "dest": "/index.js",
+      "methods": ["POST", "OPTIONS", "GET"]
+    }
+  ]
+}

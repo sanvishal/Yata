@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import Toast from "../ToastNotification";
 import Sidebar from "./Sidebar";
 import MainContent from "./MainContent";
+import { setMode } from "../../actions/projectActions";
 
 import { connect } from "react-redux";
 
@@ -14,6 +15,7 @@ class Workspace extends Component {
         popup: "swal2-popup__success",
       },
     });
+    this.props.setMode("EVERYTHING");
   }
 
   render() {
@@ -35,4 +37,4 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, {})(Workspace);
+export default connect(mapStateToProps, { setMode })(Workspace);

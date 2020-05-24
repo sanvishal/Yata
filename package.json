@@ -4,6 +4,7 @@
   "description": "yata's big brain",
   "main": "index.js",
   "scripts": {
+    "now-start": "node index.js",
     "server": "nodemon index.js",
     "client": "cd client && yarn run start",
     "dev": "concurrently -n Server,Yata \"set \"NODE_ENV=dev\" && yarn run server\" \"set \"NODE_ENV=dev\" && yarn run client\" ",

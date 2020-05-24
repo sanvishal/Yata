@@ -39,16 +39,29 @@ mongoose
 app.use(passport.initialize());
 require("./config/passport")(passport);
 
+app.options(
+  "*",
+  cors({
+    credentials: true,
+    origin: "*",
+    optionsSuccessStatus: 200,
+  })
+);
 app.use(
   cors({
     credentials: true,
-    origin: true,
+    origin: "*",
+    optionsSuccessStatus: 200,
   })
 );
 
 app.use("/api/users", users);
 app.use("/api/projects", projects);
 app.use("/api/todos", todos);
+
+app.get("/", (req, res) => {
+  res.send("Yata");
+});
 
 const port = process.env.PORT || 8080;
 
