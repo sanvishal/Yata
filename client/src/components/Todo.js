@@ -11,6 +11,12 @@ class Todo extends Component {
     loading: false,
   };
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.status !== this.props.status) {
+      this.setState({ myStatus: this.props.status });
+    }
+  }
+
   _setStatus = async (id, status) => {
     this.setState({ loading: true });
     await this.props.setStatus({

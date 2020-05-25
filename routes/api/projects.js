@@ -6,6 +6,7 @@ const ObjectId = require("mongoose").Types.ObjectId;
 
 const Project = require("../../models/Project");
 const User = require("../../models/User");
+const Todo = require("../../models/Todo");
 
 const router = express.Router();
 
@@ -83,8 +84,8 @@ router.post("/getprojects", (req, res) => {
   const { id } = req.body;
 
   if (!ObjectId.isValid(id)) {
-    return res.status(400).json({
-      type: "project",
+    return res.status(401).json({
+      type: "auth",
       message: "You are not authorised",
       status: "error",
     });
@@ -114,6 +115,42 @@ router.post("/getprojects", (req, res) => {
           status: "error",
         });
       });
+  }
+});
+
+router.post("/getprogress", (req, res) => {
+  const { id, projectid } = req.body;
+
+  if (!ObjectId.isValid(projectid) || !ObjectId.isValid(projectid)) {
+    return res.status(400).json({
+      type: "project",
+      message: "You are not authorised",
+      status: "error",
+    });
+  } else {
+    Todo.aggregate([
+      {
+        $match: {
+          done: true,
+          projects: { $elemMatch: { projectid: ObjectId(projectid) } },
+          userid: ObjectId(id),
+        },
+      },
+      {
+        $group: {
+          _id: projectid,
+          done: {
+            $sum: { $cond: ["$done", 1, 0] },
+          },
+        },
+      },
+    ]).then((result) => {
+      return res.json({
+        status: "success",
+        type: "project",
+        message: result.length !== 0 ? result : [{ _id: projectid, done: 0 }],
+      });
+    });
   }
 });
 

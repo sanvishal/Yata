@@ -238,5 +238,20 @@
     -webkit-flex: 5;
     flex: 10;
     height: calc(100vh - 80px);
+
+    .project-progress {
+      width: 90%;
+      margin-right: auto;
+      margin-left: auto;
+      margin-bottom: 15px;
+
+      .progress-bar {
+        height: 3px;
+        border-radius: 2px;
+        background-color: black;
+        width: 0%;
+        transition: all 0.3s ease-in-out;
+      }
+    }
   }
 }

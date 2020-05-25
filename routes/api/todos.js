@@ -182,6 +182,28 @@ router.post("/setstatus", (req, res) => {
         { new: true }
       )
         .then((result) => {
+          // let projectids = [];
+          // result.projects.forEach((project) => {
+          //   projectids.push(project.projectid);
+          // });
+          // Todo.aggregate([
+          //   {
+          //     $match: {
+          //       done: true,
+          //       projects: { $elemMatch: { projectid: { $in: projectids } } },
+          //     },
+          //   },
+          //   { $unwind: "$projects" },
+          //   {
+          //     $group: {
+          //       _id: "$projects.projectid",
+          //       done: { $first: "$done" },
+          //     },
+          //   },
+          // ]).then((agg) => {
+          //   console.log(agg);
+          // });
+
           res.json({
             status: "success",
             type: "todo",
@@ -189,6 +211,7 @@ router.post("/setstatus", (req, res) => {
           });
         })
         .catch((err) => {
+          console.log(err);
           return res.status(500).json({
             status: "error",
             message: "Internel server error",

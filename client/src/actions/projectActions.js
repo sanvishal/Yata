@@ -96,3 +96,23 @@ export const setMode = (mode) => (dispatch) => {
     });
   }
 };
+
+export const getProgress = async (data, done) => {
+  var config = {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "x-access-token": localStorage.getItem("JWT"),
+    },
+  };
+
+  await axios
+    .post(getPath("/api/projects/getprogress"), data, config)
+    .then((res) => {
+      // console.log(res.data);
+      return done(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
