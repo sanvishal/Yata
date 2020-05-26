@@ -5,9 +5,20 @@ import Todo from "../Todo";
 import { getTodos } from "../../actions/todoActions";
 import { getProgress } from "../../actions/projectActions";
 import ProjectProgress from "../ProjectProgress";
+import moment from "moment";
+import { ChevronDown } from "react-feather";
 
 class MainContent extends Component {
-  state = { loading: false, completion: 0 };
+  state = {
+    loading: false,
+    completion: 0,
+    dueTodos: [],
+    todayTodos: [],
+    upcomingTodos: [],
+    dueOpen: true,
+    todayOpen: true,
+    upcomingOpen: true,
+  };
 
   fetchTodos = async () => {
     await this.props.getTodos({
@@ -24,7 +35,6 @@ class MainContent extends Component {
         projectid: this.props.projects.selectedProject.id,
       },
       (res) => {
-        console.log(res.data.message[0]);
         this.getPercentageCompletion(res.data.message[0].done);
       }
     );
@@ -44,18 +54,78 @@ class MainContent extends Component {
         this.fetchProgress();
       }
     }
+
+    if (prevProps.todos.todos !== this.props.todos.todos) {
+      if (this.props.todos.todos.length) {
+        this.seperateTodosByDate();
+      }
+    }
   }
 
   getPercentageCompletion(completed) {
-    console.log(completed, this.props.todos.todos);
     this.setState({
       completion:
         completed !== 0 ? completed / this.props.todos.todos.length : 0,
     });
   }
 
-  render() {
+  seperateTodosByDate() {
+    let todayTodos = [],
+      dueTodos = [],
+      upcomingTodos = [];
     const { todos } = this.props.todos;
+    todos.forEach((todo) => {
+      if (todo.deadline) {
+        if (moment(todo.deadline).isSame(moment(), "day")) {
+          todayTodos.push(todo);
+        } else if (moment(todo.deadline).isBefore(moment(), "day")) {
+          dueTodos.push(todo);
+        } else {
+          upcomingTodos.push(todo);
+        }
+      } else {
+        upcomingTodos.push(todo);
+      }
+    });
+    this.setState(
+      {
+        todayTodos,
+        dueTodos,
+        upcomingTodos,
+      },
+      () => {
+        console.log(this.state);
+      }
+    );
+  }
+
+  renderTodos(todos, isMycategoryOpen) {
+    return (
+      <div
+        className="todo-list-container"
+        style={{
+          //maxHeight: isMycategoryOpen ? "200vh" : "0vh",
+          display: isMycategoryOpen ? "block" : "none",
+        }}
+      >
+        {todos.map((todo, key) => {
+          return (
+            <Todo
+              task={todo.task}
+              status={todo.status}
+              id={todo._id}
+              deadline={todo.deadline}
+              className="fadeInUp"
+              key={key}
+            />
+          );
+        })}
+      </div>
+    );
+  }
+
+  render() {
+    const { upcomingTodos, dueTodos, todayTodos } = this.state;
     const { selectedMode, selectedProject } = this.props.projects;
     if (selectedMode === "PROJECTS") {
       return (
@@ -65,18 +135,73 @@ class MainContent extends Component {
             progress={this.state.completion}
             color={selectedProject.color}
           />
-          <div className="todo-list-container">
-            {todos.map((todo, key) => {
-              return (
-                <Todo
-                  task={todo.task}
-                  status={todo.status}
-                  id={todo._id}
-                  className="fadeInUp"
-                  key={key}
-                />
-              );
-            })}
+          <div className="todos-container">
+            {dueTodos.length !== 0 && (
+              <>
+                <div
+                  className="timeline-title"
+                  onClick={(e) =>
+                    this.setState({ dueOpen: !this.state.dueOpen })
+                  }
+                >
+                  Due Tasks
+                  <ChevronDown
+                    className="collapse-icon"
+                    style={{
+                      transform: this.state.dueOpen
+                        ? "rotate(180deg)"
+                        : "rotate(0deg)",
+                    }}
+                  />
+                </div>
+
+                {this.renderTodos(dueTodos, this.state.dueOpen)}
+              </>
+            )}
+            {todayTodos.length !== 0 && (
+              <>
+                <div
+                  className="timeline-title"
+                  onClick={(e) =>
+                    this.setState({ todayOpen: !this.state.todayOpen })
+                  }
+                >
+                  Today
+                  <ChevronDown
+                    className="collapse-icon"
+                    style={{
+                      transform: this.state.todayOpen
+                        ? "rotate(180deg)"
+                        : "rotate(0deg)",
+                    }}
+                  />
+                </div>
+
+                {this.renderTodos(todayTodos, this.state.todayOpen)}
+              </>
+            )}
+            {upcomingTodos.length !== 0 && (
+              <>
+                <div
+                  className="timeline-title"
+                  onClick={(e) =>
+                    this.setState({ upcomingOpen: !this.state.upcomingOpen })
+                  }
+                >
+                  Upcoming
+                  <ChevronDown
+                    className="collapse-icon"
+                    style={{
+                      transform: this.state.upcomingOpen
+                        ? "rotate(180deg)"
+                        : "rotate(0deg)",
+                    }}
+                  />
+                </div>
+
+                {this.renderTodos(upcomingTodos, this.state.upcomingOpen)}
+              </>
+            )}
           </div>
         </div>
       );

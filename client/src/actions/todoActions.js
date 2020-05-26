@@ -20,7 +20,7 @@ export const addTodo = (todo) => async (dispatch) => {
       });
     })
     .catch((err) => {
-      if (typeof err === "object") {
+      if (typeof err.response === "object") {
         dispatch({
           type: GET_ERRORS,
           payload: {
@@ -52,7 +52,7 @@ export const getTodos = (userData) => async (dispatch) => {
       });
     })
     .catch((err) => {
-      if (typeof err === "object") {
+      if (typeof err.response === "object") {
         dispatch({
           type: GET_ERRORS,
           payload: {
@@ -83,7 +83,7 @@ export const setStatus = (todo) => async (dispatch) => {
       });
     })
     .catch((err) => {
-      if (typeof err === "object") {
+      if (typeof err.response === "object") {
         dispatch({
           type: GET_ERRORS,
           payload: {

@@ -4,6 +4,7 @@ import { setStatus } from "../actions/todoActions";
 import { connect } from "react-redux";
 import Toast from "./ToastNotification";
 import Reward from "react-rewards";
+import moment from "moment";
 
 class Todo extends Component {
   state = {
@@ -91,7 +92,14 @@ class Todo extends Component {
             <div className="loader"></div>
           )}
         </Reward>
-        <span>{task}</span>
+        <div className="task">{task}</div>
+        {this.props.deadline ? (
+          <div className="deadline">
+            {moment(this.props.deadline).format("DD MMM")}
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
     );
   }

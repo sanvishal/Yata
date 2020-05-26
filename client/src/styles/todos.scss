@@ -285,10 +285,10 @@
 
 .todo-list-container {
   width: 90%;
-  max-height: 80vh;
-  overflow-y: auto;
   margin-left: auto;
   margin-right: auto;
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
   &__todo {
     margin-bottom: 5px;
     padding: 15px;
@@ -299,11 +299,13 @@
     justify-content: flex-start;
     align-items: center;
     align-content: center;
+    border-bottom: 1px solid rgba(223, 223, 223, 0.1);
     transition: all 0.3s ease-in-out;
 
     &:hover {
       background-color: $bg-color-light;
       border-radius: 5px;
+      border-bottom: 1px solid rgba(223, 223, 223, 0);
     }
 
     svg {
@@ -334,6 +336,18 @@
       height: 22px;
       margin-bottom: 5px;
       margin-top: 5px;
+    }
+
+    .deadline {
+      margin-left: auto;
+      color: #525457;
+      transition: all 0.19s ease-in-out;
+    }
+
+    &:hover {
+      .deadline {
+        color: #848586;
+      }
     }
   }
 }
