@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Gravatar from "react-gravatar";
+import onclickoutside from "react-onclickoutside";
 import logo from "../../assets/logo.png";
 import { connect } from "react-redux";
 import { logoutUser } from "../../actions/authActions";
@@ -23,6 +24,10 @@ class Navbar extends Component {
   toggleDropdown = (e) => {
     this.setState({ dropdownOpen: !this.state.dropdownOpen });
   };
+
+  handleClickOutside() {
+    this.setState({ dropdownOpen: false });
+  }
 
   render() {
     const { auth } = this.props;
@@ -109,4 +114,4 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { logoutUser })(Navbar);
+export default connect(mapStateToProps, { logoutUser })(onclickoutside(Navbar));

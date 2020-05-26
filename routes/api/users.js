@@ -113,7 +113,11 @@ router.post("/login", (req, res) => {
                   err
                 );
               }
-              res.json({ status: "success", token: "Bearer " + token });
+              // res.cookie("JWT", "Bearer " + token, {
+              //   httpOnly: true,
+              //   secure: true,
+              // });
+              return res.json({ status: "success", token: "Bearer " + token });
             }
           );
         } else {

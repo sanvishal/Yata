@@ -3,14 +3,15 @@
   display: flex;
   min-height: 100%;
   margin-top: 80px;
-  // padding-left: 70px;
+  //padding-left: 70px;
   padding-right: 70px;
   .sidebar-container {
     background-color: #272b2f;
     -webkit-flex: 1;
     flex: 2;
-    padding-left: 70px;
-    border-top-right-radius: 10px;
+    padding-left: 20px;
+    //padding-left: 10px;
+    border-radius: 10px;
     .sidebar {
       padding: 15px;
       width: inherit !important;
@@ -239,6 +240,7 @@
     flex: 10;
     max-height: calc(100vh - 80px);
     height: calc(100vh - 80px);
+    z-index: 2;
     .todos-container {
       overflow-y: auto !important;
       max-height: calc(100% - 120px);
@@ -259,6 +261,69 @@
       }
     }
 
+    .toggle-views {
+      margin-bottom: 0px;
+      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+
+      display: flex;
+      justify-content: flex-end;
+      position: relative;
+
+      .buttons {
+        justify-content: flex-end;
+
+        button {
+          background: $bg-color-light;
+          border: none;
+          color: white;
+          z-index: 10;
+          font-size: 14px;
+          transition: all 0.2s ease;
+
+          &.is-selected {
+            background: #5d5d5d;
+          }
+
+          &:first-child,
+          &:not(:last-child) {
+            border-right: 2px solid rgba(128, 128, 128, 0.187);
+          }
+
+          svg {
+            width: 15px;
+            height: 15px;
+          }
+
+          &.all {
+            svg {
+              color: $cta-color;
+            }
+          }
+
+          &.todo {
+            svg {
+              color: grey;
+              stroke-width: 3px;
+            }
+          }
+
+          &.doing {
+            svg {
+              color: rgb(255, 188, 38);
+            }
+          }
+
+          &.done {
+            svg {
+              color: greenyellow;
+            }
+          }
+        }
+      }
+    }
+
     .timeline-title {
       font-family: "Poppins", monospace;
       font-size: 18px;
@@ -267,6 +332,7 @@
       margin-right: auto;
       color: rgb(179, 179, 179);
       margin-top: 20px;
+      @include no-select;
 
       .collapse-icon {
         margin-left: auto;

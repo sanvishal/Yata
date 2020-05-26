@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const expressJWT = require("express-jwt");
 const app = express();
 
 const users = require("./routes/api/users");
@@ -39,14 +41,31 @@ mongoose
 app.use(passport.initialize());
 require("./config/passport")(passport);
 
-app.options(
-  "*",
-  cors({
-    credentials: true,
-    origin: "*",
-    optionsSuccessStatus: 200,
-  })
-);
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "*");
+
+//   res.setHeader(
+//     "Access-Control-Allow-Methods",
+//     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+//   );
+
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "X-Requested-With,content-type,content-encoding,x-access-token"
+//   );
+
+//   res.setHeader("Access-Control-Allow-Credentials", true);
+//   next();
+// });
+
+// app.options(
+//   "*",
+//   cors({
+//     credentials: true,
+//     origin: "*",
+//     optionsSuccessStatus: 200,
+//   })
+// );
 app.use(
   cors({
     credentials: true,

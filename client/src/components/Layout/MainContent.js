@@ -6,7 +6,13 @@ import { getTodos } from "../../actions/todoActions";
 import { getProgress } from "../../actions/projectActions";
 import ProjectProgress from "../ProjectProgress";
 import moment from "moment";
-import { ChevronDown } from "react-feather";
+import {
+  ChevronDown,
+  CheckCircle,
+  Circle,
+  PlayCircle,
+  Home,
+} from "react-feather";
 
 class MainContent extends Component {
   state = {
@@ -18,6 +24,7 @@ class MainContent extends Component {
     dueOpen: true,
     todayOpen: true,
     upcomingOpen: true,
+    currentView: "ALL",
   };
 
   fetchTodos = async () => {
@@ -58,6 +65,8 @@ class MainContent extends Component {
     if (prevProps.todos.todos !== this.props.todos.todos) {
       if (this.props.todos.todos.length) {
         this.seperateTodosByDate();
+      } else {
+        this.setState({ dueTodos: [], todayTodos: [], upcomingTodos: [] });
       }
     }
   }
@@ -124,6 +133,10 @@ class MainContent extends Component {
     );
   }
 
+  changeView(e, view) {
+    this.setState({ currentView: view });
+  }
+
   render() {
     const { upcomingTodos, dueTodos, todayTodos } = this.state;
     const { selectedMode, selectedProject } = this.props.projects;
@@ -135,6 +148,59 @@ class MainContent extends Component {
             progress={this.state.completion}
             color={selectedProject.color}
           />
+          <div className="toggle-views">
+            <div className="buttons has-addons">
+              <button
+                className={
+                  "button all" +
+                  (this.state.currentView === "ALL" ? " is-selected" : "")
+                }
+                onClick={(e) => this.changeView(e, "ALL")}
+              >
+                <span className="icon is-small">
+                  <Home />
+                </span>
+                <span>All</span>
+              </button>
+              <button
+                className={
+                  "button todo" +
+                  (this.state.currentView === "TODO" ? " is-selected" : "")
+                }
+                onClick={(e) => this.changeView(e, "TODO")}
+              >
+                <span className="icon is-small">
+                  <Circle />
+                </span>
+                <span>Todo</span>
+              </button>
+              <button
+                className={
+                  "button doing" +
+                  (this.state.currentView === "DOING" ? " is-selected" : "")
+                }
+                onClick={(e) => this.changeView(e, "DOING")}
+              >
+                <span className="icon is-small">
+                  <PlayCircle />
+                </span>
+                <span>Doing</span>
+              </button>
+              <button
+                className={
+                  "button done" +
+                  (this.state.currentView === "DONE" ? " is-selected" : "")
+                }
+                onClick={(e) => this.changeView(e, "DONE")}
+              >
+                <span className="icon is-small">
+                  <CheckCircle />
+                </span>
+                <span>Done</span>
+              </button>
+            </div>
+          </div>
+
           <div className="todos-container">
             {dueTodos.length !== 0 && (
               <>

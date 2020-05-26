@@ -121,20 +121,45 @@
 
     .todo-input {
       width: 100%;
-      input {
-        flex: 2;
-        background-color: $bg-color-light;
-        height: 50px;
-        color: white;
-        font-size: 20px;
-        border: none;
-        box-shadow: 0px 0px 20px 20px rgba(0, 0, 0, 0);
-        font-family: "Poppins", monospace;
-        border-top-left-radius: 0px;
-        border-bottom-left-radius: 0px;
+      span {
+        input {
+          flex: 2;
+          width: 100%;
+          background-color: $bg-color-light;
+          height: 50px;
+          color: white;
+          font-size: 20px;
+          border: none;
+          box-shadow: 0px 0px 20px 20px rgba(0, 0, 0, 0);
+          font-family: "Poppins", monospace;
+          border-top-left-radius: 0px;
+          border-bottom-left-radius: 0px;
+          outline: none;
+          padding-left: 7px;
 
-        &::placeholder {
-          color: #4c5258;
+          &::placeholder {
+            color: #4c5258;
+          }
+        }
+
+        .react-autocomplete-input {
+          background: $bg-color-light;
+          border-radius: 3px;
+          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+
+          li {
+            border-radius: 3px;
+            padding: 5px;
+            color: rgb(199, 199, 199);
+            strong {
+              color: $cta-color;
+            }
+            &:hover,
+            &.active {
+              background: #555555;
+              color: white;
+            }
+          }
         }
       }
     }
@@ -175,7 +200,7 @@
         transition: all 0.2s ease-in-out;
 
         &:hover {
-          background-color: rgba(182, 251, 79, 0.7);
+          background-color: rgb(182, 251, 79);
           color: white;
         }
       }
@@ -193,7 +218,7 @@
       font-weight: 900;
 
       &:hover {
-        background-color: rgba(253, 65, 60, 0.7);
+        background-color: rgb(255, 71, 65);
         color: white;
       }
     }
@@ -218,59 +243,70 @@
   }
 }
 
-.react-calendar {
-  display: block;
+.calender-select {
+  width: 350px;
   margin-left: auto;
-  margin-right: 20px;
-  border-radius: 3px;
-  border: 0px;
-  background-color: $bg-color-light;
-  button {
-    color: white;
-
-    &:disabled {
-      background: #4c5258;
-      opacity: 0.5;
-    }
-
-    &:hover {
-      background-color: #4c5258 !important;
-    }
-
-    &.react-calendar__tile--now {
-      background-color: $cta-color;
-    }
-  }
-
-  &__navigation {
+  z-index: 100;
+  position: relative;
+  .react-calendar {
+    width: 100%;
+    display: block;
+    border-radius: 3px;
+    border: 0px;
     background-color: $bg-color-light;
     button {
       color: white;
 
+      &:disabled {
+        background: #34373d;
+        text-decoration: line-through;
+        color: #ffffffa0;
+        //opacity: 0.5;
+      }
+
       &:hover {
         background-color: #4c5258 !important;
       }
+
+      &.react-calendar__tile--now {
+        background-color: $cta-color;
+      }
+    }
+
+    &__navigation {
+      background-color: $bg-color-light;
+      button {
+        color: white;
+
+        &:hover {
+          background-color: #4c5258 !important;
+        }
+      }
+    }
+
+    &__viewContainer {
+      background-color: $bg-color-light;
+    }
+
+    &__month-view__weekdays__weekday {
+      color: #4c5258;
+    }
+
+    &__navigation button:enabled:focus {
+      background-color: #4c5258;
+    }
+
+    &__month-view__days__day--neighboringMonth {
+      opacity: 0.4;
     }
   }
-
-  &__viewContainer {
-    background-color: $bg-color-light;
-  }
-
-  &__month-view__weekdays__weekday {
-    color: #4c5258;
-  }
-
-  &__navigation button:enabled:focus {
-    background-color: #4c5258;
-  }
-
-  &__month-view__days__day--neighboringMonth {
-    opacity: 0.4;
-  }
 }
+
 .react-calendar__month-view__days__day--weekend {
   color: $cta-color !important;
+  &:disabled {
+    color: #fd554fa0 !important;
+  }
 
   &.react-calendar__tile--active {
     color: white !important;

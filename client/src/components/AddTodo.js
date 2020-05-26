@@ -16,6 +16,8 @@ import Calendar from "react-calendar";
 import moment from "moment";
 import getRandomColor from "../utils/getRandomColor";
 import "react-calendar/dist/Calendar.css";
+import TextInput from "react-autocomplete-input";
+import "react-autocomplete-input/dist/bundle.css";
 
 function extractProjects(str) {
   let splitStr = str.split(" ");
@@ -62,15 +64,15 @@ class AddTodo extends Component {
     calendarOpen: false,
     difference: "",
     linkedProjects: [],
+    projectNames: [],
   };
 
   toggleStatus(e) {
     this.setState({ statusOpen: !this.state.statusOpen });
   }
 
-  onChangeTask(e) {
-    // console.log(this.state.projects);
-    let projects = extractProjects(e.target.value),
+  onChangeTask(value) {
+    let projects = extractProjects(value),
       newProjects = {},
       linkedProjects = [];
 
@@ -93,7 +95,7 @@ class AddTodo extends Component {
       });
     });
     this.setState({
-      task: e.target.value,
+      task: value,
       projects: newProjects,
       linkedProjects,
     });
@@ -124,17 +126,26 @@ class AddTodo extends Component {
       ) {
         this.setState({
           task: "",
+          projects: [],
         });
       }
+    }
+
+    if (prevProps.projects.projects !== this.props.projects.projects) {
+      let projectNames = [];
+      this.props.projects.projects.forEach((project) => {
+        projectNames.push(project.projectname);
+      });
+      this.setState({ projectNames });
     }
   }
 
   toggleOpen(e) {
-    this.setState({ isOpen: true, statusOpen: false });
+    this.setState({ isOpen: true, statusOpen: false, calendarOpen: false });
   }
 
   handleClickOutside() {
-    this.setState({ isOpen: false, statusOpen: false });
+    this.setState({ isOpen: false, statusOpen: false, calendarOpen: false });
   }
 
   setStatus(e, status) {
@@ -215,6 +226,10 @@ class AddTodo extends Component {
     this.setState({ calendarOpen: !this.state.calendarOpen });
   }
 
+  checkTrigger() {
+    return this.state.task.length ? " #" : "#";
+  }
+
   render() {
     return (
       <div className="todo-container">
@@ -235,7 +250,9 @@ class AddTodo extends Component {
             })}
           </div>
         ) : (
-          <></>
+          <div className="projects-accumulator">
+            <div className="project-badge">#</div>
+          </div>
         )}
         <div className="todo-inputs">
           <div
@@ -305,13 +322,23 @@ class AddTodo extends Component {
             </div>
           </div>
           <div className="control todo-input">
-            <input
+            {/* <input
               className="input"
               type="text"
               placeholder="Add a todo"
               onChange={(e) => this.onChangeTask(e)}
               onClick={(e) => this.toggleOpen(e)}
               value={this.state.task}
+            /> */}
+            <TextInput
+              Component="input"
+              trigger={this.checkTrigger()}
+              placeholder="Add a todo"
+              onChange={(val) => this.onChangeTask(val)}
+              onClick={(e) => this.toggleOpen(e)}
+              value={this.state.task}
+              options={this.state.projectNames}
+              offsetY={40}
             />
           </div>
         </div>
