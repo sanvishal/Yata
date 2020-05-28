@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import AddTodo from "../AddTodo";
 import { connect } from "react-redux";
 import Todo from "../Todo";
-import { getTodos } from "../../actions/todoActions";
+import { getTodos, getTodosByDate } from "../../actions/todoActions";
 import { getProgress } from "../../actions/projectActions";
 import ProjectProgress from "../ProjectProgress";
 import moment from "moment";
@@ -17,6 +17,7 @@ import {
 class MainContent extends Component {
   state = {
     loading: false,
+    fetching: false,
     completion: 0,
     dueTodos: [],
     todayTodos: [],
@@ -33,6 +34,15 @@ class MainContent extends Component {
       projectid: this.props.projects.selectedProject.id,
     });
     await this.fetchProgress();
+    this.setState({ fetching: false });
+  };
+
+  fetchTodosByDate = async (date) => {
+    await this.props.getTodosByDate({
+      id: this.props.auth.user.id,
+      date: date,
+    });
+    this.setState({ fetching: false });
   };
 
   fetchProgress = async () => {
@@ -42,7 +52,10 @@ class MainContent extends Component {
         projectid: this.props.projects.selectedProject.id,
       },
       (res) => {
-        this.getPercentageCompletion(res.data.message[0].done);
+        this.getPercentageCompletion(
+          res.data.message[0].done,
+          res.data.message[0].total
+        );
       }
     );
   };
@@ -52,13 +65,39 @@ class MainContent extends Component {
       prevProps.projects.selectedProject !== this.props.projects.selectedProject
     ) {
       if (Object.keys(this.props.projects.selectedProject).length) {
+        this.setState({ fetching: true });
         this.fetchTodos();
       }
     }
 
     if (prevProps.todos.updated_todo !== this.props.todos.updated_todo) {
       if (Object.keys(this.props.todos.updated_todo).length) {
-        this.fetchProgress();
+        const { status } = this.props.todos.updated_todo;
+        this.props.todos.todos.forEach((todo) => {
+          if (todo._id === this.props.todos.updated_todo._id) {
+            todo.status = status;
+          }
+        });
+
+        if (Object.keys(this.props.todos.todos_by_date).length) {
+          this.props.todos.todos_by_date.forEach((todo) => {
+            if (todo._id === this.props.todos.updated_todo._id) {
+              todo.status = status;
+            }
+          });
+        }
+
+        if (this.props.projects.selectedMode === "PROJECTS") {
+          this.fetchProgress();
+        } else {
+          if (this.props.projects.selectedMode === "TODAY") {
+            this.setState({ fetching: true });
+            this.fetchTodosByDate(moment().startOf("day"));
+          } else if (this.props.selectedMode === "TOMORROW") {
+            this.setState({ fetching: true });
+            this.fetchTodosByDate(moment().startOf("day").add(1, "days"));
+          }
+        }
       }
     }
 
@@ -69,20 +108,63 @@ class MainContent extends Component {
         this.setState({ dueTodos: [], todayTodos: [], upcomingTodos: [] });
       }
     }
+
+    if (prevProps.todos.todos_by_date !== this.props.todos.todos_by_date) {
+      if (this.props.todos.todos_by_date.length) {
+        this.seperateTodosByDate();
+      } else {
+        this.setState({ dueTodos: [], todayTodos: [], upcomingTodos: [] });
+      }
+    }
+
+    if (prevProps.projects.selectedMode !== this.props.projects.selectedMode) {
+      if (this.props.projects.selectedMode === "TODAY") {
+        this.setState({ fetching: true });
+        this.fetchTodosByDate(moment().startOf("day"));
+      } else if (this.props.projects.selectedMode === "TOMORROW") {
+        this.setState({ fetching: true });
+        this.fetchTodosByDate(moment().startOf("day").add(1, "days"));
+      }
+    }
+
+    if (prevProps.todos.new_todo !== this.props.todos.new_todo) {
+      if (this.props.projects.selectedMode === "PROJECTS") {
+        console.log("hreer");
+        this.fetchProgress();
+      }
+    }
   }
 
-  getPercentageCompletion(completed) {
+  getPercentageCompletion(completed, total) {
     this.setState({
-      completion:
-        completed !== 0 ? completed / this.props.todos.todos.length : 0,
+      completion: completed !== 0 ? completed / total : 0,
     });
+  }
+
+  filterByCurrentView(todos) {
+    const { currentView } = this.state;
+    switch (currentView) {
+      case "TODO":
+        return todos.filter((todo) => todo.status === 0, todos);
+      case "DOING":
+        return todos.filter((todo) => todo.status === 1, todos);
+      case "DONE":
+        return todos.filter((todo) => todo.status === 2, todos);
+      default:
+        return todos;
+    }
   }
 
   seperateTodosByDate() {
     let todayTodos = [],
       dueTodos = [],
-      upcomingTodos = [];
-    const { todos } = this.props.todos;
+      upcomingTodos = [],
+      todos = [];
+    if (this.props.projects.selectedMode === "PROJECTS") {
+      todos = this.filterByCurrentView(this.props.todos.todos);
+    } else {
+      todos = this.filterByCurrentView(this.props.todos.todos_by_date);
+    }
     todos.forEach((todo) => {
       if (todo.deadline) {
         if (moment(todo.deadline).isSame(moment(), "day")) {
@@ -96,16 +178,11 @@ class MainContent extends Component {
         upcomingTodos.push(todo);
       }
     });
-    this.setState(
-      {
-        todayTodos,
-        dueTodos,
-        upcomingTodos,
-      },
-      () => {
-        console.log(this.state);
-      }
-    );
+    this.setState({
+      todayTodos,
+      dueTodos,
+      upcomingTodos,
+    });
   }
 
   renderTodos(todos, isMycategoryOpen) {
@@ -134,7 +211,71 @@ class MainContent extends Component {
   }
 
   changeView(e, view) {
-    this.setState({ currentView: view });
+    this.setState({ currentView: view }, () => {
+      //this.fetchTodos();
+      this.seperateTodosByDate();
+    });
+  }
+
+  renderToggleViews(styleOptions) {
+    return (
+      <div className="toggle-views" style={styleOptions}>
+        <div className="buttons has-addons">
+          <button
+            className={
+              "button all" +
+              (this.state.currentView === "ALL" ? " is-selected" : "")
+            }
+            disabled={this.state.fetching}
+            onClick={(e) => this.changeView(e, "ALL")}
+          >
+            <span className="icon is-small">
+              <Home />
+            </span>
+            <span>All</span>
+          </button>
+          <button
+            className={
+              "button todo" +
+              (this.state.currentView === "TODO" ? " is-selected" : "")
+            }
+            onClick={(e) => this.changeView(e, "TODO")}
+            disabled={this.state.fetching}
+          >
+            <span className="icon is-small">
+              <Circle />
+            </span>
+            <span>Todo</span>
+          </button>
+          <button
+            className={
+              "button doing" +
+              (this.state.currentView === "DOING" ? " is-selected" : "")
+            }
+            onClick={(e) => this.changeView(e, "DOING")}
+            disabled={this.state.fetching}
+          >
+            <span className="icon is-small">
+              <PlayCircle />
+            </span>
+            <span>Doing</span>
+          </button>
+          <button
+            className={
+              "button done" +
+              (this.state.currentView === "DONE" ? " is-selected" : "")
+            }
+            onClick={(e) => this.changeView(e, "DONE")}
+            disabled={this.state.fetching}
+          >
+            <span className="icon is-small">
+              <CheckCircle />
+            </span>
+            <span>Done</span>
+          </button>
+        </div>
+      </div>
+    );
   }
 
   render() {
@@ -148,59 +289,8 @@ class MainContent extends Component {
             progress={this.state.completion}
             color={selectedProject.color}
           />
-          <div className="toggle-views">
-            <div className="buttons has-addons">
-              <button
-                className={
-                  "button all" +
-                  (this.state.currentView === "ALL" ? " is-selected" : "")
-                }
-                onClick={(e) => this.changeView(e, "ALL")}
-              >
-                <span className="icon is-small">
-                  <Home />
-                </span>
-                <span>All</span>
-              </button>
-              <button
-                className={
-                  "button todo" +
-                  (this.state.currentView === "TODO" ? " is-selected" : "")
-                }
-                onClick={(e) => this.changeView(e, "TODO")}
-              >
-                <span className="icon is-small">
-                  <Circle />
-                </span>
-                <span>Todo</span>
-              </button>
-              <button
-                className={
-                  "button doing" +
-                  (this.state.currentView === "DOING" ? " is-selected" : "")
-                }
-                onClick={(e) => this.changeView(e, "DOING")}
-              >
-                <span className="icon is-small">
-                  <PlayCircle />
-                </span>
-                <span>Doing</span>
-              </button>
-              <button
-                className={
-                  "button done" +
-                  (this.state.currentView === "DONE" ? " is-selected" : "")
-                }
-                onClick={(e) => this.changeView(e, "DONE")}
-              >
-                <span className="icon is-small">
-                  <CheckCircle />
-                </span>
-                <span>Done</span>
-              </button>
-            </div>
-          </div>
 
+          {this.renderToggleViews()}
           <div className="todos-container">
             {dueTodos.length !== 0 && (
               <>
@@ -275,7 +365,51 @@ class MainContent extends Component {
       return (
         <div className="main-content-container">
           <AddTodo />
-          <div>{selectedMode}</div>
+          {this.renderToggleViews({ marginTop: "10px" })}
+          {todayTodos.length !== 0 && (
+            <>
+              <div
+                className="timeline-title"
+                onClick={(e) =>
+                  this.setState({ todayOpen: !this.state.todayOpen })
+                }
+              >
+                Today
+                <ChevronDown
+                  className="collapse-icon"
+                  style={{
+                    transform: this.state.todayOpen
+                      ? "rotate(180deg)"
+                      : "rotate(0deg)",
+                  }}
+                />
+              </div>
+
+              {this.renderTodos(todayTodos, this.state.todayOpen)}
+            </>
+          )}
+          {upcomingTodos.length !== 0 && (
+            <>
+              <div
+                className="timeline-title"
+                onClick={(e) =>
+                  this.setState({ upcomingOpen: !this.state.upcomingOpen })
+                }
+              >
+                Tomorrow
+                <ChevronDown
+                  className="collapse-icon"
+                  style={{
+                    transform: this.state.upcomingOpen
+                      ? "rotate(180deg)"
+                      : "rotate(0deg)",
+                  }}
+                />
+              </div>
+
+              {this.renderTodos(upcomingTodos, this.state.upcomingOpen)}
+            </>
+          )}
         </div>
       );
     }
@@ -288,4 +422,6 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { getTodos })(MainContent);
+export default connect(mapStateToProps, { getTodos, getTodosByDate })(
+  MainContent
+);

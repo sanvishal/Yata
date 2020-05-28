@@ -15,7 +15,6 @@ let initialState = {
 export default function (state = initialState, action) {
   switch (action.type) {
     case ADD_PROJECT:
-      console.log(action.payload);
       return {
         ...state,
         new_project: action.payload,

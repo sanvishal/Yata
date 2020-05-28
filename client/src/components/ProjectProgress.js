@@ -3,6 +3,7 @@ import React, { Component } from "react";
 class ProjectProgress extends Component {
   render() {
     const { progress, color } = this.props;
+    console.log(progress, color);
     return (
       <div
         className="project-progress"

@@ -8,12 +8,14 @@ export const registerUser = (userData, history) => (dispatch) => {
   axios
     .post(getPath("/api/users/register"), userData)
     .then((res) => history.push("/login"))
-    .catch((err) =>
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data.message,
-      })
-    );
+    .catch((err) => {
+      if (typeof err.response === "object") {
+        dispatch({
+          type: GET_ERRORS,
+          payload: err.response.data.message,
+        });
+      }
+    });
 };
 
 export const loginUser = (userData) => (dispatch) => {
@@ -27,18 +29,21 @@ export const loginUser = (userData) => (dispatch) => {
       dispatch(setCurrentUser(decoded));
     })
     .catch((err) => {
-      console.log(err.response);
-      dispatch({
-        type: GET_ERRORS,
-        payload:
-          typeof err.response.data.message === "string"
-            ? {
-                message: err.response.data.message,
-                timestamp: Date.now(),
-                toast: true,
-              }
-            : err.response.data.message,
-      });
+      if (typeof err.response === "object") {
+        dispatch({
+          type: GET_ERRORS,
+          payload:
+            typeof err.response.data.message === "string"
+              ? {
+                  message: err.response.data.message,
+                  timestamp: Date.now(),
+                  toast: true,
+                }
+              : err.response.data.message,
+        });
+      } else {
+        console.log(err);
+      }
     });
 };
 

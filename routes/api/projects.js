@@ -145,10 +145,19 @@ router.post("/getprogress", (req, res) => {
         },
       },
     ]).then((result) => {
-      return res.json({
-        status: "success",
-        type: "project",
-        message: result.length !== 0 ? result : [{ _id: projectid, done: 0 }],
+      Todo.countDocuments({
+        userid: id,
+        projects: { $elemMatch: { projectid } },
+      }).then((cnt) => {
+        result[0]["total"] = cnt;
+        return res.json({
+          status: "success",
+          type: "project",
+          message:
+            result.length !== 0
+              ? result
+              : [{ _id: projectid, done: 0, total: cnt }],
+        });
       });
     });
   }

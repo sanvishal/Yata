@@ -1,6 +1,12 @@
 import axios from "axios";
 import { getPath } from "../utils/getPath";
-import { ADD_TODO, GET_ERRORS, GET_TODOS, SET_TODO_STATUS } from "./types";
+import {
+  ADD_TODO,
+  GET_ERRORS,
+  GET_TODOS,
+  SET_TODO_STATUS,
+  GET_TODOS_BY_DATE,
+} from "./types";
 
 export const addTodo = (todo) => async (dispatch) => {
   var config = {
@@ -79,6 +85,37 @@ export const setStatus = (todo) => async (dispatch) => {
     .then((res) => {
       dispatch({
         type: SET_TODO_STATUS,
+        payload: res.data.message,
+      });
+    })
+    .catch((err) => {
+      if (typeof err.response === "object") {
+        dispatch({
+          type: GET_ERRORS,
+          payload: {
+            message: err.response.data.message,
+            timestamp: Date.now(),
+          },
+        });
+      } else {
+        console.log(err);
+      }
+    });
+};
+
+export const getTodosByDate = (data) => async (dispatch) => {
+  var config = {
+    headers: {
+      "x-access-token": localStorage.getItem("JWT"),
+      "Content-Type": "application/json",
+    },
+  };
+
+  await axios
+    .post(getPath("/api/todos/gettodosbydate"), data, config)
+    .then((res) => {
+      dispatch({
+        type: GET_TODOS_BY_DATE,
         payload: res.data.message,
       });
     })
