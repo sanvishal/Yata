@@ -31,19 +31,17 @@ class DateTodos extends Component {
   }
 
   shouldPropsUpdate(date) {
+    const { selectedMode } = this.props.projects;
     let selectedDate = moment(date);
     let today = moment();
     let tomorrow = moment().add(1, "day");
-    if (
-      selectedDate.isSame(today, "day") &&
-      this.props.projects.selectedMode === "TODAY"
-    ) {
+    if (selectedDate.isSame(today, "day") && selectedMode === "TODAY") {
       return true;
     } else if (
       selectedDate.isSame(tomorrow, "day") &&
-      this.props.projects.selectedMode === "YESTERDAY"
+      selectedMode === "TOMORROW"
     ) {
-      return false;
+      return true;
     }
     return false;
   }
@@ -60,7 +58,10 @@ class DateTodos extends Component {
             ...this.props.todos.todos,
             this.props.todos.new_todo,
           ];
-          this.setState({ todos: this.props.todos.todos });
+
+          this.setState({ todos: this.props.todos.todos }, () =>
+            console.log(this.state.todos)
+          );
         }
       }
     }
@@ -99,10 +100,6 @@ class DateTodos extends Component {
       </div>
     );
   }
-
-  // shouldComponentUpdate(prevState) {
-  //   return this.props.todos.todos !== prevState.todos;
-  // }
 
   render() {
     const { todos } = this.state;

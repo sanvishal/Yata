@@ -10,29 +10,29 @@ const Todo = require("../../models/Todo");
 
 const router = express.Router();
 
-router.use(function (req, res, next) {
-  var token = req.headers["x-access-token"].split(" ")[1];
+// router.use(function (req, res, next) {
+//   var token = req.headers["x-access-token"].split(" ")[1];
 
-  if (!token) {
-    return res.status(401).json({
-      type: "auth",
-      message: "You are not authorized to access",
-      status: "error",
-    });
-  }
-  jwt.verify(token, keys.serverSecret, function (err, decoded) {
-    if (err) {
-      return res.status(401).json({
-        type: "auth",
-        message: "You are not authorized to access",
-        status: "error",
-      });
-    } else {
-      //console.log("approved", decoded);
-      next();
-    }
-  });
-});
+//   if (!token) {
+//     return res.status(401).json({
+//       type: "auth",
+//       message: "You are not authorized to access",
+//       status: "error",
+//     });
+//   }
+//   jwt.verify(token, keys.serverSecret, function (err, decoded) {
+//     if (err) {
+//       return res.status(401).json({
+//         type: "auth",
+//         message: "You are not authorized to access",
+//         status: "error",
+//       });
+//     } else {
+//       //console.log("approved", decoded);
+//       next();
+//     }
+//   });
+// });
 
 router.post("/addproject", (req, res) => {
   const { id, projectname, color } = req.body;
@@ -131,33 +131,27 @@ router.post("/getprogress", (req, res) => {
     Todo.aggregate([
       {
         $match: {
-          done: true,
           projects: { $elemMatch: { projectid: ObjectId(projectid) } },
           userid: ObjectId(id),
         },
       },
+
       {
         $group: {
           _id: projectid,
           done: {
             $sum: { $cond: ["$done", 1, 0] },
           },
+          total: {
+            $sum: 1,
+          },
         },
       },
     ]).then((result) => {
-      Todo.countDocuments({
-        userid: id,
-        projects: { $elemMatch: { projectid } },
-      }).then((cnt) => {
-        result[0]["total"] = cnt;
-        return res.json({
-          status: "success",
-          type: "project",
-          message:
-            result.length !== 0
-              ? result
-              : [{ _id: projectid, done: 0, total: cnt }],
-        });
+      return res.json({
+        status: "success",
+        type: "project",
+        message: result[0],
       });
     });
   }

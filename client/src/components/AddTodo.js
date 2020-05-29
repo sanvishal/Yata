@@ -176,21 +176,6 @@ class AddTodo extends Component {
     });
   };
 
-  // updatePropsOnTodoAdd() {
-  //   const { new_todo } = this.props.todos;
-
-  //   const { selectedProject, selectedMode } = this.props.projects;
-  //   const { projects } = new_todo;
-  //   projects.forEach((project) => {
-  //     console.log(project, selectedProject);
-  //     if (selectedProject.projectid === project._id) {
-  //       this.props.todos.todos.push(new_todo);
-  //       console.log(this.props.todos.todos);
-  //       return;
-  //     }
-  //   });
-  // }
-
   fetchTodosByDate = async (date) => {
     await this.props.getTodosByDate({
       id: this.props.auth.user.id,
@@ -212,10 +197,6 @@ class AddTodo extends Component {
       }
 
       await this.props.addTodo(todoData);
-
-      if (this.props.projects.selectedMode === "PROJECTS") {
-        await this.fetchTodos();
-      }
     } else {
       Toast.fire({
         title: "Enter a task!",

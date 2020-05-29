@@ -46,12 +46,50 @@ class MainContent extends Component {
       },
       (res) => {
         this.getPercentageCompletion(
-          res.data.message[0].done,
-          res.data.message[0].total
+          res.data.message.done,
+          res.data.message.total
         );
       }
     );
   };
+
+  recalculateProgressOnUpdate() {
+    let total = this.props.todos.todos.length,
+      done = 0;
+    this.props.todos.todos.forEach((todo) => {
+      if (todo.status === 2) {
+        done++;
+      }
+    });
+    this.getPercentageCompletion(done, total);
+  }
+
+  updatePropsOnStatusChange() {
+    const { status } = this.props.todos.updated_todo;
+    let todos = this.props.todos.todos;
+    for (let idx in todos) {
+      if (todos[idx]._id === this.props.todos.updated_todo._id) {
+        todos[idx].status = status;
+        break;
+      }
+    }
+    this.props.todos.todos = todos;
+  }
+
+  updatePropsOnTodoAdd() {
+    const { new_todo } = this.props.todos;
+
+    const { selectedProject } = this.props.projects;
+    const { projects } = new_todo;
+    let newTodos = this.props.todos.todos;
+    projects.forEach((project) => {
+      if (selectedProject.projectid === project._id) {
+        newTodos.push(new_todo);
+        this.props.todos.todos = newTodos;
+        return;
+      }
+    });
+  }
 
   componentDidUpdate(prevProps) {
     if (
@@ -65,13 +103,8 @@ class MainContent extends Component {
 
     if (prevProps.todos.updated_todo !== this.props.todos.updated_todo) {
       if (Object.keys(this.props.todos.updated_todo).length) {
-        const { status } = this.props.todos.updated_todo;
-        this.props.todos.todos.forEach((todo) => {
-          if (todo._id === this.props.todos.updated_todo._id) {
-            todo = this.props.todos.updated_todo;
-            return;
-          }
-        });
+        this.updatePropsOnStatusChange();
+        this.recalculateProgressOnUpdate();
       }
     }
 
@@ -86,6 +119,7 @@ class MainContent extends Component {
     if (prevProps.todos.new_todo !== this.props.todos.new_todo) {
       if (this.props.projects.selectedMode === "PROJECTS") {
         this.fetchProgress();
+        this.updatePropsOnTodoAdd();
         if (this.props.todos.todos.length) {
           this.seperateTodosByDate();
         }
