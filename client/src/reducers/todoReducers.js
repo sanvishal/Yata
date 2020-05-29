@@ -9,7 +9,7 @@ let initialState = {
   new_todo: {},
   todos: [],
   updated_todo: {},
-  todos_by_date: {},
+  fetching: false,
 };
 
 export default function (state = initialState, action) {
@@ -23,16 +23,12 @@ export default function (state = initialState, action) {
       return {
         ...state,
         todos: action.payload,
+        fetching: action.fetching,
       };
     case SET_TODO_STATUS:
       return {
         ...state,
         updated_todo: action.payload,
-      };
-    case GET_TODOS_BY_DATE:
-      return {
-        ...state,
-        todos_by_date: action.payload,
       };
     default:
       return state;

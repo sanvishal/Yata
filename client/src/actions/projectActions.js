@@ -12,6 +12,7 @@ import {
 
 export const addProject = (projectData) => async (dispatch) => {
   var config = {
+    withCredentials: true,
     headers: {
       "x-access-token": localStorage.getItem("JWT"),
       "Content-Type": "application/json",
@@ -44,6 +45,7 @@ export const addProject = (projectData) => async (dispatch) => {
 
 export const fetchProjects = (userdata) => async (dispatch) => {
   var config = {
+    withCredentials: true,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -99,6 +101,7 @@ export const setMode = (mode) => (dispatch) => {
 
 export const getProgress = async (data, done) => {
   var config = {
+    withCredentials: true,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",

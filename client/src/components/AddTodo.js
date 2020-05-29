@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { addTodo, getTodos } from "../actions/todoActions";
+import { addTodo, getTodos, getTodosByDate } from "../actions/todoActions";
 import { addProject } from "../actions/projectActions";
 import onclickoutside from "react-onclickoutside";
 import Toast from "./ToastNotification";
@@ -176,6 +176,28 @@ class AddTodo extends Component {
     });
   };
 
+  // updatePropsOnTodoAdd() {
+  //   const { new_todo } = this.props.todos;
+
+  //   const { selectedProject, selectedMode } = this.props.projects;
+  //   const { projects } = new_todo;
+  //   projects.forEach((project) => {
+  //     console.log(project, selectedProject);
+  //     if (selectedProject.projectid === project._id) {
+  //       this.props.todos.todos.push(new_todo);
+  //       console.log(this.props.todos.todos);
+  //       return;
+  //     }
+  //   });
+  // }
+
+  fetchTodosByDate = async (date) => {
+    await this.props.getTodosByDate({
+      id: this.props.auth.user.id,
+      date,
+    });
+  };
+
   _addTodo = async (e) => {
     if (this.state.task) {
       await this.addNonExistingProjects();
@@ -190,7 +212,10 @@ class AddTodo extends Component {
       }
 
       await this.props.addTodo(todoData);
-      await this.fetchTodos();
+
+      if (this.props.projects.selectedMode === "PROJECTS") {
+        await this.fetchTodos();
+      }
     } else {
       Toast.fire({
         title: "Enter a task!",
@@ -395,6 +420,8 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { addTodo, addProject, getTodos })(
-  onclickoutside(AddTodo)
-);
+export default connect(mapStateToProps, {
+  addTodo,
+  addProject,
+  getTodos,
+})(onclickoutside(AddTodo));

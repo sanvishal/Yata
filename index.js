@@ -2,8 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
-const cors = require("cors");
 const app = express();
+const CORS = require("express-cors");
 
 const users = require("./routes/api/users");
 const projects = require("./routes/api/projects");
@@ -39,38 +39,17 @@ mongoose
 app.use(passport.initialize());
 require("./config/passport")(passport);
 
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-  );
-
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "X-Requested-With, content-type,content-encoding, x-access-token"
-  );
-
-  res.setHeader("Access-Control-Allow-Credentials", true);
-  next();
-});
-
-app.options(
-  "*",
-  cors({
-    credentials: true,
-    origin: "*",
-    optionsSuccessStatus: 200,
+app.use(
+  CORS({
+    allowedOrigins: ["localhost:*"],
+    headers: ["X-Requested-With", "content-type", "x-access-token"],
+    methods: ["GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"],
   })
 );
-// app.use(
-//   cors({
-//     credentials: true,
-//     origin: "http://localhost:3000",
-//     optionsSuccessStatus: 200,
-//   })
-// );
+
+app.options("*", (req, res, next) => {
+  res.sendStatus(204);
+});
 
 app.use("/api/users", users);
 app.use("/api/projects", projects);

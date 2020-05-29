@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import AddTodo from "../AddTodo";
+import DateTodos from "./DateTodos";
 import { connect } from "react-redux";
 import Todo from "../Todo";
 import { getTodos, getTodosByDate } from "../../actions/todoActions";
@@ -37,14 +38,6 @@ class MainContent extends Component {
     this.setState({ fetching: false });
   };
 
-  fetchTodosByDate = async (date) => {
-    await this.props.getTodosByDate({
-      id: this.props.auth.user.id,
-      date: date,
-    });
-    this.setState({ fetching: false });
-  };
-
   fetchProgress = async () => {
     await getProgress(
       {
@@ -75,29 +68,10 @@ class MainContent extends Component {
         const { status } = this.props.todos.updated_todo;
         this.props.todos.todos.forEach((todo) => {
           if (todo._id === this.props.todos.updated_todo._id) {
-            todo.status = status;
+            todo = this.props.todos.updated_todo;
+            return;
           }
         });
-
-        if (Object.keys(this.props.todos.todos_by_date).length) {
-          this.props.todos.todos_by_date.forEach((todo) => {
-            if (todo._id === this.props.todos.updated_todo._id) {
-              todo.status = status;
-            }
-          });
-        }
-
-        if (this.props.projects.selectedMode === "PROJECTS") {
-          this.fetchProgress();
-        } else {
-          if (this.props.projects.selectedMode === "TODAY") {
-            this.setState({ fetching: true });
-            this.fetchTodosByDate(moment().startOf("day"));
-          } else if (this.props.selectedMode === "TOMORROW") {
-            this.setState({ fetching: true });
-            this.fetchTodosByDate(moment().startOf("day").add(1, "days"));
-          }
-        }
       }
     }
 
@@ -109,28 +83,12 @@ class MainContent extends Component {
       }
     }
 
-    if (prevProps.todos.todos_by_date !== this.props.todos.todos_by_date) {
-      if (this.props.todos.todos_by_date.length) {
-        this.seperateTodosByDate();
-      } else {
-        this.setState({ dueTodos: [], todayTodos: [], upcomingTodos: [] });
-      }
-    }
-
-    if (prevProps.projects.selectedMode !== this.props.projects.selectedMode) {
-      if (this.props.projects.selectedMode === "TODAY") {
-        this.setState({ fetching: true });
-        this.fetchTodosByDate(moment().startOf("day"));
-      } else if (this.props.projects.selectedMode === "TOMORROW") {
-        this.setState({ fetching: true });
-        this.fetchTodosByDate(moment().startOf("day").add(1, "days"));
-      }
-    }
-
     if (prevProps.todos.new_todo !== this.props.todos.new_todo) {
       if (this.props.projects.selectedMode === "PROJECTS") {
-        console.log("hreer");
         this.fetchProgress();
+        if (this.props.todos.todos.length) {
+          this.seperateTodosByDate();
+        }
       }
     }
   }
@@ -159,12 +117,7 @@ class MainContent extends Component {
     let todayTodos = [],
       dueTodos = [],
       upcomingTodos = [],
-      todos = [];
-    if (this.props.projects.selectedMode === "PROJECTS") {
       todos = this.filterByCurrentView(this.props.todos.todos);
-    } else {
-      todos = this.filterByCurrentView(this.props.todos.todos_by_date);
-    }
     todos.forEach((todo) => {
       if (todo.deadline) {
         if (moment(todo.deadline).isSame(moment(), "day")) {
@@ -226,7 +179,7 @@ class MainContent extends Component {
               "button all" +
               (this.state.currentView === "ALL" ? " is-selected" : "")
             }
-            disabled={this.state.fetching}
+            disabled={this.state.fetching || this.props.todos.fetching}
             onClick={(e) => this.changeView(e, "ALL")}
           >
             <span className="icon is-small">
@@ -240,7 +193,7 @@ class MainContent extends Component {
               (this.state.currentView === "TODO" ? " is-selected" : "")
             }
             onClick={(e) => this.changeView(e, "TODO")}
-            disabled={this.state.fetching}
+            disabled={this.state.fetching || this.props.todos.fetching}
           >
             <span className="icon is-small">
               <Circle />
@@ -253,7 +206,7 @@ class MainContent extends Component {
               (this.state.currentView === "DOING" ? " is-selected" : "")
             }
             onClick={(e) => this.changeView(e, "DOING")}
-            disabled={this.state.fetching}
+            disabled={this.state.fetching || this.props.todos.fetching}
           >
             <span className="icon is-small">
               <PlayCircle />
@@ -266,7 +219,7 @@ class MainContent extends Component {
               (this.state.currentView === "DONE" ? " is-selected" : "")
             }
             onClick={(e) => this.changeView(e, "DONE")}
-            disabled={this.state.fetching}
+            disabled={this.state.fetching || this.props.todos.fetching}
           >
             <span className="icon is-small">
               <CheckCircle />
@@ -366,50 +319,7 @@ class MainContent extends Component {
         <div className="main-content-container">
           <AddTodo />
           {this.renderToggleViews({ marginTop: "10px" })}
-          {todayTodos.length !== 0 && (
-            <>
-              <div
-                className="timeline-title"
-                onClick={(e) =>
-                  this.setState({ todayOpen: !this.state.todayOpen })
-                }
-              >
-                Today
-                <ChevronDown
-                  className="collapse-icon"
-                  style={{
-                    transform: this.state.todayOpen
-                      ? "rotate(180deg)"
-                      : "rotate(0deg)",
-                  }}
-                />
-              </div>
-
-              {this.renderTodos(todayTodos, this.state.todayOpen)}
-            </>
-          )}
-          {upcomingTodos.length !== 0 && (
-            <>
-              <div
-                className="timeline-title"
-                onClick={(e) =>
-                  this.setState({ upcomingOpen: !this.state.upcomingOpen })
-                }
-              >
-                Tomorrow
-                <ChevronDown
-                  className="collapse-icon"
-                  style={{
-                    transform: this.state.upcomingOpen
-                      ? "rotate(180deg)"
-                      : "rotate(0deg)",
-                  }}
-                />
-              </div>
-
-              {this.renderTodos(upcomingTodos, this.state.upcomingOpen)}
-            </>
-          )}
+          <DateTodos currentView={this.state.currentView} />
         </div>
       );
     }

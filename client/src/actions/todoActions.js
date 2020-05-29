@@ -1,15 +1,10 @@
 import axios from "axios";
 import { getPath } from "../utils/getPath";
-import {
-  ADD_TODO,
-  GET_ERRORS,
-  GET_TODOS,
-  SET_TODO_STATUS,
-  GET_TODOS_BY_DATE,
-} from "./types";
+import { ADD_TODO, GET_ERRORS, GET_TODOS, SET_TODO_STATUS } from "./types";
 
 export const addTodo = (todo) => async (dispatch) => {
   var config = {
+    withCredentials: true,
     headers: {
       "x-access-token": localStorage.getItem("JWT"),
       "Content-Type": "application/json",
@@ -42,6 +37,7 @@ export const addTodo = (todo) => async (dispatch) => {
 
 export const getTodos = (userData) => async (dispatch) => {
   var config = {
+    withCredentials: true,
     headers: {
       "x-access-token": localStorage.getItem("JWT"),
       "Content-Type": "application/json",
@@ -74,6 +70,7 @@ export const getTodos = (userData) => async (dispatch) => {
 
 export const setStatus = (todo) => async (dispatch) => {
   var config = {
+    withCredentials: true,
     headers: {
       "x-access-token": localStorage.getItem("JWT"),
       "Content-Type": "application/json",
@@ -105,18 +102,26 @@ export const setStatus = (todo) => async (dispatch) => {
 
 export const getTodosByDate = (data) => async (dispatch) => {
   var config = {
+    withCredentials: true,
     headers: {
       "x-access-token": localStorage.getItem("JWT"),
       "Content-Type": "application/json",
     },
   };
 
+  dispatch({
+    type: GET_TODOS,
+    payload: [],
+    fetching: true,
+  });
+
   await axios
     .post(getPath("/api/todos/gettodosbydate"), data, config)
     .then((res) => {
       dispatch({
-        type: GET_TODOS_BY_DATE,
+        type: GET_TODOS,
         payload: res.data.message,
+        fetching: false,
       });
     })
     .catch((err) => {
@@ -126,6 +131,7 @@ export const getTodosByDate = (data) => async (dispatch) => {
           payload: {
             message: err.response.data.message,
             timestamp: Date.now(),
+            fetching: false,
           },
         });
       } else {
