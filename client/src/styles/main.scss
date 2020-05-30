@@ -18,6 +18,13 @@ html {
   font-family: "Open Sans", sans-serif !important;
 }
 
+@font-face {
+  font-family: "beedii";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../../src/assets/Beedii.woff") format("woff");
+}
+
 .swal2-popup {
   background: $bg-color-light !important;
   box-shadow: none !important;
@@ -59,6 +66,21 @@ html {
   }
 }
 
+.nothing {
+  margin-top: 100px;
+  text-align: center;
+  color: #525457;
+  .illustration {
+    font-family: "beedii";
+    font-size: 70px;
+  }
+  span {
+    font-family: "Poppins", monospace;
+    font-size: 20px;
+    font-weight: 700;
+  }
+}
+
 .button.is-loading::after {
   left: calc(50% - (1.3em / 2)) !important;
   top: calc(50% - (1.3em / 2)) !important;
@@ -83,6 +105,16 @@ html {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+::-moz-selection {
+  color: #fd554fef;
+  background: #fd554f10;
+}
+
+::selection {
+  color: #fd554fef;
+  background: #fd554f10;
 }
 
 // @mixin styleScroll {

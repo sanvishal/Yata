@@ -12,43 +12,40 @@ class Todo extends Component {
     loading: false,
   };
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.status !== this.props.status) {
-      this.setState({ myStatus: this.props.status });
-    }
-  }
-
   _setStatus = async (id, status) => {
     this.setState({ loading: true });
-    await this.props.setStatus({
-      id,
-      status,
-    });
-    this.setState({
-      myStatus: this.props.todos.updated_todo.status,
-      loading: false,
-    });
-    if (status === 2) {
-      this.reward.rewardMe();
-      Toast.fire({
-        title:
-          "Keep it up " + this.props.auth.user.name + ", you're on a streak!",
-        customClass: {
-          popup: "swal2-popup__success",
-        },
+    if (status === 0 || status === 1 || status === 2) {
+      await this.props.setStatus({
+        id,
+        status,
       });
+      this.setState({
+        //myStatus: this.props.todos.updated_todo.status,
+        loading: false,
+      });
+      if (status === 2 && this.reward) {
+        this.reward.rewardMe();
+        Toast.fire({
+          title:
+            "Keep it up " + this.props.auth.user.name + ", you're on a streak!",
+          customClass: {
+            popup: "swal2-popup__success",
+          },
+        });
+      }
     }
   };
 
   onClickDone(e, id) {
-    if (this.state.myStatus === 2) {
+    if (this.props.status === 2) {
       this._setStatus(id, 0);
     } else {
       this._setStatus(id, 2);
     }
   }
+
   render() {
-    const { task, id } = this.props;
+    const { task, id, status } = this.props;
     return (
       <div className={"todo-list-container__todo"}>
         <Reward
@@ -66,14 +63,14 @@ class Todo extends Component {
           }}
         >
           {!this.state.loading ? (
-            this.state.myStatus === 0 ? (
+            status === 0 ? (
               <>
                 <Circle
                   className="todo"
                   onClick={(e) => this.onClickDone(e, id)}
                 />
               </>
-            ) : this.state.myStatus === 1 ? (
+            ) : status === 1 ? (
               <>
                 <PlayCircle
                   className="doing"

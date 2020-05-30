@@ -24,7 +24,7 @@
         justify-content: left;
         align-items: center;
         align-content: center;
-        &:nth-child(4) {
+        &:nth-child(6) {
           margin-top: 40px;
           font-weight: 700;
           color: rgb(187, 187, 187);
@@ -33,7 +33,7 @@
           padding: 0px;
         }
 
-        &:not(:nth-child(4)) {
+        &:not(:nth-child(6)) {
           cursor: pointer;
           color: rgb(184, 184, 184);
           font-family: "Poppins", sans-serif;
@@ -233,6 +233,7 @@
       }
     }
   }
+
   .main-content-container {
     // background-color: lightblue;
     padding: 15px;
@@ -261,16 +262,57 @@
       }
     }
 
-    .toggle-views {
+    .options-bar {
       margin-bottom: 0px;
       width: 90%;
       margin-left: auto;
       margin-right: auto;
 
       display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
       justify-content: flex-end;
+      align-items: center;
+      align-content: center;
       position: relative;
+      .calender-toggle {
+        margin-right: 20px;
+        height: 35px;
+        background: $bg-color-light;
+        border: none;
+        color: white;
+        font-size: 14px;
+        transition: all 0.2s ease;
 
+        &:hover {
+          background-color: #2e3133;
+        }
+
+        svg {
+          width: 15px;
+          height: 15px;
+          color: $cta-color;
+        }
+
+        .close-icon {
+          margin-top: 2px;
+          margin-left: -15px;
+          opacity: 0;
+          transition: all 0.2s ease-in-out;
+          svg {
+            color: rgb(153, 153, 153);
+            stroke-width: 4px;
+          }
+        }
+
+        &.is-selected {
+          background: #4e4e4e;
+          .close-icon {
+            opacity: 1;
+            margin-left: 4px;
+          }
+        }
+      }
       .buttons {
         justify-content: flex-end;
 
@@ -281,6 +323,10 @@
           z-index: 10;
           font-size: 14px;
           transition: all 0.2s ease;
+
+          &:hover {
+            background-color: #2e3133;
+          }
 
           &.is-selected {
             background: #5d5d5d;

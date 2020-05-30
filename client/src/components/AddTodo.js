@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { addTodo, getTodos, getTodosByDate } from "../actions/todoActions";
+import { addTodo, getTodos } from "../actions/todoActions";
 import { addProject } from "../actions/projectActions";
 import onclickoutside from "react-onclickoutside";
 import Toast from "./ToastNotification";
@@ -13,9 +13,9 @@ import {
   Calendar as Cal,
 } from "react-feather";
 import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 import moment from "moment";
 import getRandomColor from "../utils/getRandomColor";
-import "react-calendar/dist/Calendar.css";
 import TextInput from "react-autocomplete-input";
 import "react-autocomplete-input/dist/bundle.css";
 
@@ -99,6 +99,14 @@ class AddTodo extends Component {
       projects: newProjects,
       linkedProjects,
     });
+  }
+
+  componentDidMount() {
+    let projectNames = [];
+    this.props.projects.projects.forEach((project) => {
+      projectNames.push(project.projectname);
+    });
+    this.setState({ projectNames });
   }
 
   componentDidUpdate(prevProps) {
@@ -197,6 +205,7 @@ class AddTodo extends Component {
       }
 
       await this.props.addTodo(todoData);
+      this.setState({ task: "", calendarOpen: false });
     } else {
       Toast.fire({
         title: "Enter a task!",
@@ -234,6 +243,10 @@ class AddTodo extends Component {
 
   checkTrigger() {
     return this.state.task.length ? " #" : "#";
+  }
+
+  handleRequestOptions(x) {
+    console.log(this.state);
   }
 
   render() {
@@ -337,8 +350,9 @@ class AddTodo extends Component {
               value={this.state.task}
             /> */}
             <TextInput
+              onRequestOptions={(e) => this.handleRequestOptions(e)}
               Component="input"
-              trigger={this.checkTrigger()}
+              trigger={"#"}
               placeholder="Add a todo"
               onChange={(val) => this.onChangeTask(val)}
               onClick={(e) => this.toggleOpen(e)}

@@ -139,3 +139,43 @@ export const getTodosByDate = (data) => async (dispatch) => {
       }
     });
 };
+
+export const getUntrackedTodos = (data) => async (dispatch) => {
+  var config = {
+    withCredentials: true,
+    headers: {
+      "x-access-token": localStorage.getItem("JWT"),
+      "Content-Type": "application/json",
+    },
+  };
+
+  dispatch({
+    type: GET_TODOS,
+    payload: [],
+    fetching: true,
+  });
+
+  await axios
+    .post(getPath("/api/todos/getuntrackedtodos"), data, config)
+    .then((res) => {
+      dispatch({
+        type: GET_TODOS,
+        payload: res.data.message,
+        fetching: false,
+      });
+    })
+    .catch((err) => {
+      if (typeof err.response === "object") {
+        dispatch({
+          type: GET_ERRORS,
+          payload: {
+            message: err.response.data.message,
+            timestamp: Date.now(),
+            fetching: false,
+          },
+        });
+      } else {
+        console.log(err);
+      }
+    });
+};

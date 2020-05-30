@@ -247,7 +247,14 @@
   width: 350px;
   margin-left: auto;
   z-index: 100;
-  position: relative;
+  position: absolute;
+  right: 100px;
+
+  &.upcoming-calender {
+    right: 200px;
+    margin-top: 10px;
+  }
+
   .react-calendar {
     width: 100%;
     display: block;
@@ -324,7 +331,7 @@
   margin-left: auto;
   margin-right: auto;
   overflow: hidden;
-  transition: all 0.2s ease-in-out;
+  transition: background-color border-radius border-bottom 0.2s ease-in-out;
   &__todo {
     margin-bottom: 5px;
     padding: 15px;

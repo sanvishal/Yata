@@ -309,7 +309,44 @@ router.post("/gettodosbydate", (req, res) => {
 });
 
 router.post("/getuntrackedtodos", (req, res) => {
-  const {id} = req.body;
-})
+  const { userid } = req.body;
+  if (!ObjectId.isValid(userid)) {
+    return res.status(400).json({
+      status: "error",
+      message: "You are not authorised",
+      type: "auth",
+    });
+  } else {
+    User.findOne({ _id: userid }).then((user) => {
+      if (!user) {
+        return res.status(400).json({
+          status: "error",
+          message: "You are not authorised",
+          type: "auth",
+        });
+      } else {
+        Todo.find({
+          userid,
+          deadline: null,
+          projects: [],
+        })
+          .then((result) => {
+            res.json({
+              status: "success",
+              type: "todo",
+              message: result,
+            });
+          })
+          .catch((err) => {
+            return res.status(500).json({
+              status: "error",
+              message: "Internel server error",
+              type: "todo",
+            });
+          });
+      }
+    });
+  }
+});
 
 module.exports = router;

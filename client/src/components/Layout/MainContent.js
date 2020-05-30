@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import AddTodo from "../AddTodo";
 import DateTodos from "./DateTodos";
+import UntrackedTodos from "./UntrackedTodos";
 import { connect } from "react-redux";
 import Todo from "../Todo";
 import { getTodos, getTodosByDate } from "../../actions/todoActions";
@@ -13,7 +14,11 @@ import {
   Circle,
   PlayCircle,
   Home,
+  Calendar as Cal,
+  X,
 } from "react-feather";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 
 class MainContent extends Component {
   state = {
@@ -27,6 +32,8 @@ class MainContent extends Component {
     todayOpen: true,
     upcomingOpen: true,
     currentView: "ALL",
+    calendarOpen: false,
+    selectedDate: "",
   };
 
   fetchTodos = async () => {
@@ -204,9 +211,13 @@ class MainContent extends Component {
     });
   }
 
-  renderToggleViews(styleOptions) {
+  toggleCalender(e) {
+    this.setState({ calendarOpen: !this.state.calendarOpen });
+  }
+
+  renderToggleViews() {
     return (
-      <div className="toggle-views" style={styleOptions}>
+      <div className="toggle-views">
         <div className="buttons has-addons">
           <button
             className={
@@ -265,6 +276,72 @@ class MainContent extends Component {
     );
   }
 
+  renderProperIllustration() {
+    switch (this.state.currentView) {
+      case "DOING":
+        return (
+          <div className="nothing">
+            <div className="illustration">😊</div>
+            <span>
+              You don't have any on-going tasks, assign some tasks to yourself
+            </span>
+          </div>
+        );
+      case "TODO":
+        return (
+          <div className="nothing">
+            <div className="illustration">🎉</div>
+            <span>
+              Seems like you've completed all tasks in{" "}
+              {"#" + this.props.projects.selectedProject.projectname}, now rest
+            </span>
+          </div>
+        );
+
+      case "DONE":
+        return (
+          <div className="nothing">
+            <div className="illustration">😐</div>
+            <span>You didn't complete any tasks...yet</span>
+          </div>
+        );
+
+      case "ALL":
+        return (
+          <div className="nothing">
+            <div className="illustration">⭐</div>
+            <span>
+              There are no tasks in this tag, tag{" "}
+              {"#" + this.props.projects.selectedProject.projectname} while
+              adding a task
+            </span>
+          </div>
+        );
+
+      default:
+        return (
+          <div className="nothing">
+            <div className="illustration">😓</div>
+            <span>Bear with me here, while I load all your tasks...</span>
+            <div
+              className="loader"
+              style={{
+                marginTop: "10px",
+                width: "28px",
+                height: "28px",
+                marginLeft: "auto",
+                marginRight: "auto",
+                display: "block",
+                border: "2px solid #4c5258",
+                borderRightColor: "transparent",
+                borderTopColor: "transparent",
+              }}
+            />
+          </div>
+        );
+    }
+  }
+
   render() {
     const { upcomingTodos, dueTodos, todayTodos } = this.state;
     const { selectedMode, selectedProject } = this.props.projects;
@@ -276,86 +353,162 @@ class MainContent extends Component {
             progress={this.state.completion}
             color={selectedProject.color}
           />
+          <div className="options-bar">{this.renderToggleViews()}</div>
+          {!this.state.fetching ? (
+            upcomingTodos.length || dueTodos.length || todayTodos.length ? (
+              <div className="todos-container">
+                {dueTodos.length !== 0 && (
+                  <>
+                    <div
+                      className="timeline-title"
+                      onClick={(e) =>
+                        this.setState({ dueOpen: !this.state.dueOpen })
+                      }
+                    >
+                      Due Tasks
+                      <ChevronDown
+                        className="collapse-icon"
+                        style={{
+                          transform: this.state.dueOpen
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)",
+                        }}
+                      />
+                    </div>
 
-          {this.renderToggleViews()}
-          <div className="todos-container">
-            {dueTodos.length !== 0 && (
-              <>
-                <div
-                  className="timeline-title"
-                  onClick={(e) =>
-                    this.setState({ dueOpen: !this.state.dueOpen })
-                  }
-                >
-                  Due Tasks
-                  <ChevronDown
-                    className="collapse-icon"
-                    style={{
-                      transform: this.state.dueOpen
-                        ? "rotate(180deg)"
-                        : "rotate(0deg)",
-                    }}
-                  />
-                </div>
+                    {this.renderTodos(dueTodos, this.state.dueOpen)}
+                  </>
+                )}
+                {todayTodos.length !== 0 && (
+                  <>
+                    <div
+                      className="timeline-title"
+                      onClick={(e) =>
+                        this.setState({ todayOpen: !this.state.todayOpen })
+                      }
+                    >
+                      Today
+                      <ChevronDown
+                        className="collapse-icon"
+                        style={{
+                          transform: this.state.todayOpen
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)",
+                        }}
+                      />
+                    </div>
 
-                {this.renderTodos(dueTodos, this.state.dueOpen)}
-              </>
-            )}
-            {todayTodos.length !== 0 && (
-              <>
-                <div
-                  className="timeline-title"
-                  onClick={(e) =>
-                    this.setState({ todayOpen: !this.state.todayOpen })
-                  }
-                >
-                  Today
-                  <ChevronDown
-                    className="collapse-icon"
-                    style={{
-                      transform: this.state.todayOpen
-                        ? "rotate(180deg)"
-                        : "rotate(0deg)",
-                    }}
-                  />
-                </div>
+                    {this.renderTodos(todayTodos, this.state.todayOpen)}
+                  </>
+                )}
+                {upcomingTodos.length !== 0 && (
+                  <>
+                    <div
+                      className="timeline-title"
+                      onClick={(e) =>
+                        this.setState({
+                          upcomingOpen: !this.state.upcomingOpen,
+                        })
+                      }
+                    >
+                      Upcoming
+                      <ChevronDown
+                        className="collapse-icon"
+                        style={{
+                          transform: this.state.upcomingOpen
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)",
+                        }}
+                      />
+                    </div>
 
-                {this.renderTodos(todayTodos, this.state.todayOpen)}
-              </>
-            )}
-            {upcomingTodos.length !== 0 && (
-              <>
-                <div
-                  className="timeline-title"
-                  onClick={(e) =>
-                    this.setState({ upcomingOpen: !this.state.upcomingOpen })
-                  }
-                >
-                  Upcoming
-                  <ChevronDown
-                    className="collapse-icon"
-                    style={{
-                      transform: this.state.upcomingOpen
-                        ? "rotate(180deg)"
-                        : "rotate(0deg)",
-                    }}
-                  />
-                </div>
-
-                {this.renderTodos(upcomingTodos, this.state.upcomingOpen)}
-              </>
-            )}
-          </div>
+                    {this.renderTodos(upcomingTodos, this.state.upcomingOpen)}
+                  </>
+                )}
+              </div>
+            ) : (
+              this.renderProperIllustration()
+            )
+          ) : (
+            <div className="nothing">
+              <div className="illustration">😓</div>
+              <span>Bear with me here, while I load all your tasks...</span>
+              <div
+                className="loader"
+                style={{
+                  marginTop: "10px",
+                  width: "28px",
+                  height: "28px",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  display: "block",
+                  border: "2px solid #4c5258",
+                  borderRightColor: "transparent",
+                  borderTopColor: "transparent",
+                }}
+              />
+            </div>
+          )}
         </div>
       );
-    } else {
+    } else if (
+      selectedMode === "TOMORROW" ||
+      selectedMode === "TODAY" ||
+      selectedMode === "UPCOMING"
+    ) {
       return (
         <div className="main-content-container">
           <AddTodo />
-          {this.renderToggleViews({ marginTop: "10px" })}
-          <DateTodos currentView={this.state.currentView} />
+
+          <div className="options-bar" style={{ marginTop: "10px" }}>
+            {selectedMode === "UPCOMING" && (
+              <button
+                className={
+                  "button calender-toggle" +
+                  (this.state.calendarOpen ? " is-selected" : "")
+                }
+                onClick={(e) => this.toggleCalender(e)}
+              >
+                <span className="icon is-small">
+                  <Cal />
+                </span>
+                <span>
+                  {this.state.selectedDate
+                    ? moment(this.state.selectedDate).format("DD-MMM-YYYY")
+                    : "Select Date"}
+                </span>
+                <span className="icon is-small close-icon">
+                  <X />
+                </span>
+              </button>
+            )}
+            {this.renderToggleViews()}
+          </div>
+          <div className="calender-select upcoming-calender">
+            {selectedMode === "UPCOMING" && this.state.calendarOpen && (
+              <Calendar
+                onChange={(date) => this.setState({ selectedDate: date })}
+              />
+            )}
+          </div>
+          <DateTodos
+            currentView={this.state.currentView}
+            selectedDate={this.state.selectedDate}
+          />
         </div>
       );
+    } else if (selectedMode === "UNTRACKED") {
+      return (
+        <div className="main-content-container">
+          <AddTodo />
+          <div className="options-bar" style={{ marginTop: "10px" }}>
+            {this.renderToggleViews()}
+          </div>
+          <UntrackedTodos currentView={this.state.currentView} />
+        </div>
+      );
+    } else {
+      return <div className="main-content-container">Everything</div>;
     }
   }
 }

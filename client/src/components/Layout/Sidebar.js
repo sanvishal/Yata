@@ -1,5 +1,14 @@
 import React, { Component } from "react";
-import { Hash, Plus, Check, Home, Star, Clock } from "react-feather";
+import {
+  Hash,
+  Plus,
+  Check,
+  Home,
+  Star,
+  Clock,
+  Coffee,
+  List,
+} from "react-feather";
 import { connect } from "react-redux";
 import Toast from "../ToastNotification";
 import {
@@ -144,6 +153,26 @@ class Sidebar extends Component {
           >
             <Clock />
             <span>Tomorrow</span>
+          </div>
+          <div
+            className={
+              "sidebar__title" +
+              (selectedMode === "UPCOMING" ? " mode__active" : "")
+            }
+            onClick={(e) => this.changeMode(e, "UPCOMING")}
+          >
+            <Coffee />
+            <span>Upcoming</span>
+          </div>
+          <div
+            className={
+              "sidebar__title" +
+              (selectedMode === "UNTRACKED" ? " mode__active" : "")
+            }
+            onClick={(e) => this.changeMode(e, "UNTRACKED")}
+          >
+            <List />
+            <span>Untracked</span>
           </div>
           <div className="sidebar__title">
             <span>Tags</span>
