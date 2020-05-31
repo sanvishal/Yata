@@ -133,6 +133,7 @@ router.post("/getprogress", (req, res) => {
         $match: {
           projects: { $elemMatch: { projectid: ObjectId(projectid) } },
           userid: ObjectId(id),
+          archived: false,
         },
       },
 

@@ -47,6 +47,10 @@ const TodoSchema = new Schema({
     ref: "users",
     required: true,
   },
+  archived: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // 0 - yet to do

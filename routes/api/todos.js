@@ -95,6 +95,7 @@ router.post("/addtodo", (req, res) => {
 
 router.use("/gettodos", (req, res) => {
   const { id, projectid } = req.body;
+  let archived = req.body.archived || false;
   if (!ObjectId.isValid(id)) {
     return res.status(400).json({
       status: "error",
@@ -114,6 +115,7 @@ router.use("/gettodos", (req, res) => {
           Todo.find({
             userid: id,
             projects: { $elemMatch: { projectid: projectid } },
+            archived,
           })
             .then((todos) => {
               return res.json({
@@ -131,6 +133,7 @@ router.use("/gettodos", (req, res) => {
             });
         } else {
           Todo.find({
+            archived,
             userid: id,
           })
             .then((todos) => {
@@ -251,6 +254,7 @@ router.post("/setstatus", (req, res) => {
 
 router.post("/gettodosbydate", (req, res) => {
   const { id, date } = req.body;
+  let archived = req.body.archived || false;
 
   let start = moment(date).startOf("day").toISOString();
   let end = moment(date).endOf("day").toISOString();
@@ -281,7 +285,11 @@ router.post("/gettodosbydate", (req, res) => {
             type: "auth",
           });
         } else {
-          Todo.find({ userid: id, deadline: { $gte: start, $lte: end } })
+          Todo.find({
+            userid: id,
+            deadline: { $gte: start, $lte: end },
+            archived,
+          })
             .then((result) => {
               res.json({
                 status: "success",
@@ -310,6 +318,8 @@ router.post("/gettodosbydate", (req, res) => {
 
 router.post("/getuntrackedtodos", (req, res) => {
   const { userid } = req.body;
+  let archived = req.body.archived || false;
+
   if (!ObjectId.isValid(userid)) {
     return res.status(400).json({
       status: "error",
@@ -329,12 +339,166 @@ router.post("/getuntrackedtodos", (req, res) => {
           userid,
           deadline: null,
           projects: [],
+          archived,
         })
           .then((result) => {
             res.json({
               status: "success",
               type: "todo",
               message: result,
+            });
+          })
+          .catch((err) => {
+            return res.status(500).json({
+              status: "error",
+              message: "Internel server error",
+              type: "todo",
+            });
+          });
+      }
+    });
+  }
+});
+
+router.post("/edittodo", (req, res) => {
+  const { userid, todoid, newtodo } = req.body;
+  let archived = newtodo.archived || false;
+
+  if (!ObjectId.isValid(userid)) {
+    return res.status(400).json({
+      status: "error",
+      message: "You are not authorised",
+      type: "auth",
+    });
+  } else if (!ObjectId.isValid(todoid)) {
+    return res.status(400).json({
+      status: "error",
+      message: "malformed request :(",
+      type: "todo",
+    });
+  } else {
+    User.findOne({ _id: userid }).then((user) => {
+      if (!user) {
+        return res.status(400).json({
+          status: "error",
+          message: "You are not authorised",
+          type: "auth",
+        });
+      } else {
+        Todo.findOneAndUpdate(
+          { _id: todoid, userid },
+          {
+            $set: {
+              projects: newtodo.projects,
+              deadline: newtodo.deadline,
+              notes: newtodo.notes,
+              task: newtodo.task,
+              archived,
+            },
+          },
+          { new: true }
+        )
+          .then((updatedTodo) => {
+            return res.json({
+              status: "success",
+              message: updatedTodo,
+              type: "todo",
+            });
+          })
+          .catch((err) => {
+            return res.status(500).json({
+              status: "error",
+              message: "Internel server error",
+              type: "todo",
+            });
+          });
+      }
+    });
+  }
+});
+
+router.post("/archivetodo", (req, res) => {
+  const { userid, todoid, archived } = req.body;
+
+  if (!ObjectId.isValid(userid)) {
+    return res.status(400).json({
+      status: "error",
+      message: "You are not authorised",
+      type: "auth",
+    });
+  } else if (!ObjectId.isValid(todoid)) {
+    return res.status(400).json({
+      status: "error",
+      message: "malformed request :(",
+      type: "todo",
+    });
+  } else {
+    User.findOne({ _id: userid }).then((user) => {
+      if (!user) {
+        return res.status(400).json({
+          status: "error",
+          message: "You are not authorised",
+          type: "auth",
+        });
+      } else {
+        Todo.findOneAndUpdate(
+          { _id: todoid, userid },
+          {
+            $set: {
+              archived,
+            },
+          },
+          { new: true }
+        )
+          .then((updatedTodo) => {
+            return res.json({
+              status: "success",
+              message: updatedTodo,
+              type: "todo",
+            });
+          })
+          .catch((err) => {
+            return res.status(500).json({
+              status: "error",
+              message: "Internel server error",
+              type: "todo",
+            });
+          });
+      }
+    });
+  }
+});
+
+router.post("/deletetodo", () => {
+  const { userid, todoid } = req.body;
+
+  if (!ObjectId.isValid(userid)) {
+    return res.status(400).json({
+      status: "error",
+      message: "You are not authorised",
+      type: "auth",
+    });
+  } else if (!ObjectId.isValid(todoid)) {
+    return res.status(400).json({
+      status: "error",
+      message: "malformed request :(",
+      type: "todo",
+    });
+  } else {
+    User.findOne({ _id: userid }).then((user) => {
+      if (!user) {
+        return res.status(400).json({
+          status: "error",
+          message: "You are not authorised",
+          type: "auth",
+        });
+      } else {
+        Todo.findOneAndRemove({ _id: todoid, userid })
+          .then((updatedTodo) => {
+            return res.json({
+              status: "success",
+              message: updatedTodo,
+              type: "todo",
             });
           })
           .catch((err) => {
