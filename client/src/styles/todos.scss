@@ -141,26 +141,6 @@
             color: #4c5258;
           }
         }
-
-        .react-autocomplete-input {
-          background: $bg-color-light;
-          border-radius: 3px;
-          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-
-          li {
-            border-radius: 3px;
-            padding: 5px;
-            color: rgb(199, 199, 199);
-            strong {
-              color: $cta-color;
-            }
-            &:hover,
-            &.active {
-              background: #555555;
-              color: white;
-            }
-          }
-        }
       }
     }
   }
@@ -381,16 +361,67 @@
       margin-top: 5px;
     }
 
-    .deadline {
+    .todo-side-options {
       margin-left: auto;
-      color: #525457;
-      transition: all 0.19s ease-in-out;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      align-content: center;
+
+      .edit-todo-toggle {
+        color: #525457;
+        opacity: 0;
+        transition: all 0.19s ease-in-out;
+        cursor: pointer;
+
+        &:hover {
+          svg {
+            color: #cccccc;
+          }
+        }
+
+        svg {
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      .deadline {
+        color: #525457;
+        transition: all 0.19s ease-in-out;
+      }
     }
 
     &:hover {
       .deadline {
         color: #848586;
       }
+
+      .edit-todo-toggle {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+.react-autocomplete-input {
+  background: $bg-color-light;
+  border-radius: 3px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  list-style: none !important;
+  li {
+    border-radius: 3px;
+    padding: 5px;
+    color: rgb(199, 199, 199);
+    strong {
+      color: $cta-color;
+    }
+    &:hover,
+    &.active {
+      background: #555555;
+      color: white;
     }
   }
 }

@@ -33,7 +33,7 @@ class Navbar extends Component {
     const { auth } = this.props;
     return (
       <div className="navbar-container">
-        <nav className="navbar is-fixed-top" role="navigation">
+        <nav className="navbar" role="navigation">
           <div className="navbar-brand">
             <div className="navbar-item">
               <Link to="/" className="brand-logo">

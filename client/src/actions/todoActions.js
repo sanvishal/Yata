@@ -1,6 +1,12 @@
 import axios from "axios";
 import { getPath } from "../utils/getPath";
-import { ADD_TODO, GET_ERRORS, GET_TODOS, SET_TODO_STATUS } from "./types";
+import {
+  ADD_TODO,
+  GET_ERRORS,
+  GET_TODOS,
+  SET_TODO_STATUS,
+  SET_MODAL_VISIBILITY,
+} from "./types";
 
 export const addTodo = (todo) => async (dispatch) => {
   var config = {
@@ -178,4 +184,11 @@ export const getUntrackedTodos = (data) => async (dispatch) => {
         console.log(err);
       }
     });
+};
+
+export const toggleModal = (data) => (dispatch) => {
+  dispatch({
+    type: SET_MODAL_VISIBILITY,
+    payload: data,
+  });
 };

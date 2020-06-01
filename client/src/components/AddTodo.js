@@ -245,10 +245,6 @@ class AddTodo extends Component {
     return this.state.task.length ? " #" : "#";
   }
 
-  handleRequestOptions(x) {
-    console.log(this.state);
-  }
-
   render() {
     return (
       <div className="todo-container">
@@ -350,9 +346,8 @@ class AddTodo extends Component {
               value={this.state.task}
             /> */}
             <TextInput
-              onRequestOptions={(e) => this.handleRequestOptions(e)}
               Component="input"
-              trigger={"#"}
+              trigger={this.checkTrigger()}
               placeholder="Add a todo"
               onChange={(val) => this.onChangeTask(val)}
               onClick={(e) => this.toggleOpen(e)}

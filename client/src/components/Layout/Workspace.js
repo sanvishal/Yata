@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import Toast from "../ToastNotification";
 import Sidebar from "./Sidebar";
 import MainContent from "./MainContent";
+import EditTodo from "../EditTodo";
 import { setMode } from "../../actions/projectActions";
 
 import { connect } from "react-redux";
@@ -24,6 +25,7 @@ class Workspace extends Component {
       <div className="workspace-container">
         <Sidebar />
         <MainContent />
+        <EditTodo />
       </div>
     );
   }

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { CheckCircle, Circle, PlayCircle } from "react-feather";
-import { setStatus } from "../actions/todoActions";
+import { CheckCircle, Circle, PlayCircle, Edit } from "react-feather";
+import { setStatus, toggleModal } from "../actions/todoActions";
 import { connect } from "react-redux";
 import Toast from "./ToastNotification";
 import Reward from "react-rewards";
@@ -8,7 +8,6 @@ import moment from "moment";
 
 class Todo extends Component {
   state = {
-    myStatus: this.props.status,
     loading: false,
   };
 
@@ -42,6 +41,13 @@ class Todo extends Component {
     } else {
       this._setStatus(id, 2);
     }
+  }
+
+  onClickEditTodo(e) {
+    this.props.toggleModal({
+      modal_open: true,
+      id: this.props.id,
+    });
   }
 
   render() {
@@ -90,13 +96,21 @@ class Todo extends Component {
           )}
         </Reward>
         <div className="task">{task}</div>
-        {this.props.deadline ? (
-          <div className="deadline">
-            {moment(this.props.deadline).format("DD MMM")}
+        <div className="todo-side-options">
+          <div
+            className="edit-todo-toggle"
+            onClick={(e) => this.onClickEditTodo(e)}
+          >
+            <Edit />
           </div>
-        ) : (
-          <></>
-        )}
+          {this.props.deadline ? (
+            <div className="deadline">
+              {moment(this.props.deadline).format("DD MMM")}
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
       </div>
     );
   }
@@ -108,4 +122,4 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { setStatus })(Todo);
+export default connect(mapStateToProps, { setStatus, toggleModal })(Todo);
