@@ -1,125 +1,328 @@
 .edit-todo {
-	// display: none;
-	&__overlay {
-		position: fixed;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background-color: #80808054;
-		z-index: 100000;
-	}
+  // display: none;
+  &__overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #80808054;
+    z-index: 100000;
+  }
 
-	&__content {
-		overflow: auto;
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		width: 80%;
-		height: 80%;
-		background-color: $bg-color-dark;
-		border-radius: 5px;
-		box-shadow: 0px 0px 50px 7px rgba(0, 0, 0, 0.37);
+  &__content {
+    overflow: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 75%;
+    height: 75%;
+    background-color: $bg-color-dark;
+    border-radius: 5px;
+    box-shadow: 0px 0px 50px 7px rgba(0, 0, 0, 0.37);
 
-		.edit-icon {
-			position: absolute;
-			top: -50px;
-			left: -50px;
-			z-index: -1;
-			svg {
-				stroke-width: 2px;
-				color: grey;
-				opacity: 0.07;
-				width: 150px;
-				height: 150px;
-			}
-		}
+    .edit-icon {
+      position: absolute;
+      top: -50px;
+      left: -50px;
+      z-index: -1;
+      svg {
+        stroke-width: 2px;
+        color: grey;
+        opacity: 0.07;
+        width: 150px;
+        height: 150px;
+      }
+    }
 
-		.top-bar {
-			display: flex;
-			flex-direction: row;
-			flex-wrap: wrap;
-			justify-content: space-between;
-			align-items: center;
-			align-content: center;
-			.close-button {
-				padding: 15px;
-				svg {
-					cursor: pointer;
-					color: grey;
-					width: 30px;
-					height: 30px;
-					display: block;
-					transition: color 0.2s ease-in-out;
+    .top-bar {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      align-content: center;
+      .push-right {
+        width: 345px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
 
-					&:hover {
-						color: $cta-color;
-					}
-				}
-			}
+        button {
+          margin-left: 10px;
+          height: 30px;
+          font-size: 16px;
+          border: none;
 
-			.title {
-				font-size: 17px;
-				font-family: "Poppins", monospace;
-				font-weight: bold;
-				color: grey;
-				margin-left: 10px;
-				margin-bottom: 0px;
-				margin-left: 18px;
-			}
-		}
+          svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 4px;
+          }
 
-		.content {
-			.task {
-				margin-top: 25px;
-				width: 80%;
-				height: auto;
-				margin-left: auto;
-				margin-right: auto;
+          &.archive-todo {
+            background-color: rgba(109, 172, 203, 0.082);
+            color: rgb(109, 172, 203);
+            svg {
+              color: rgb(109, 172, 203);
+            }
+            &:hover {
+              background-color: rgba(109, 172, 203, 0.1);
+            }
+          }
 
-				input {
-					width: 100%;
-					background-color: $bg-color-dark;
-					color: white;
-					font-family: "Poppins", monospace;
-					font-weight: 700;
-					font-size: 30px;
-					box-shadow: none;
-					border: none;
-					border-radius: 5px;
-					padding: 6px;
-					outline: none !important;
+          &.delete-todo {
+            background-color: #fd554f10;
+            color: $cta-color;
+            svg {
+              color: $cta-color;
+            }
 
-					&:focus {
-						outline: none !important;
-						background-color: $bg-color-light;
-					}
-				}
-			}
+            &:hover {
+              background-color: #fd554f20;
+            }
+          }
+        }
+      }
+      .close-button {
+        padding: 15px;
+        svg {
+          cursor: pointer;
+          color: grey;
+          width: 30px;
+          height: 30px;
+          display: block;
+          transition: color 0.2s ease-in-out;
 
-			.options {
-				width: 60%;
-				margin-left: 10%;
-				margin-top: 30px;
+          &:hover {
+            color: $cta-color;
+          }
+        }
+      }
 
-				.option {
-					.title {
-						font-size: 18px !important;
-						color: grey !important;
-						font-weight: normal !important;
+      .title {
+        font-size: 17px;
+        font-family: "Poppins", monospace;
+        font-weight: bold;
+        color: grey;
+        margin-left: 10px;
+        margin-bottom: 0px;
+        margin-left: 18px;
+      }
+    }
 
-						svg {
-							width: 17px;
-							height: 17px;
-							margin-right: 5px;
-							margin-bottom: -1px;
-						}
-					}
-				}
-			}
-		}
-	}
+    .content {
+      .task {
+        margin-top: 25px;
+        width: 80%;
+        height: auto;
+        margin-left: auto;
+        margin-right: auto;
+
+        input {
+          width: 100%;
+          background-color: $bg-color-dark;
+          color: white;
+          font-family: "Poppins", monospace;
+          font-weight: 700;
+          font-size: 30px;
+          box-shadow: none;
+          border: none;
+          border-radius: 5px;
+          padding: 6px;
+          outline: none !important;
+
+          &:focus {
+            outline: none !important;
+            background-color: $bg-color-light;
+          }
+        }
+      }
+
+      .options {
+        width: 78%;
+        margin-left: 10%;
+        margin-top: 30px;
+
+        .option {
+          .title {
+            font-size: 18px !important;
+            color: grey !important;
+            margin-bottom: 0px !important;
+
+            svg {
+              width: 17px;
+              height: 17px;
+              margin-right: 5px;
+              margin-bottom: -1px;
+            }
+          }
+
+          .column {
+            color: #686868;
+            transition: background-color 0.2s ease-in-out;
+
+            &:hover {
+              background: $bg-color-light;
+            }
+          }
+
+          &.deadline {
+            .edit-indicator {
+              width: 28px;
+              height: 28px;
+              display: inline-block;
+              margin-left: 10px;
+              transition: all 0.4s ease-in-out;
+              svg {
+                width: 16px;
+                height: 16px;
+              }
+
+              &:hover {
+                color: #808080;
+              }
+            }
+          }
+
+          &.tags {
+            .tag {
+              background-color: $bg-color-light;
+              color: rgb(179, 179, 179);
+              margin-bottom: 0px;
+            }
+          }
+
+          &.notes {
+            textarea {
+              background-color: $bg-color-dark;
+              border: none;
+              box-shadow: none;
+              height: 200px;
+              width: 100%;
+              font-size: 16px;
+              color: #686868;
+
+              &:focus {
+                background-color: $bg-color-light;
+                outline: none !important;
+              }
+            }
+          }
+
+          &.status {
+            .status-preset {
+              svg {
+                width: 16px;
+                height: 16px;
+                stroke-width: 3px;
+                margin-bottom: -2px;
+                margin-right: 4px;
+                opacity: 0.7;
+
+                &.todo {
+                  color: grey;
+                }
+
+                &.doing {
+                  color: rgb(255, 188, 38);
+                }
+
+                &.done {
+                  color: greenyellow;
+                }
+              }
+            }
+
+            .status-editor {
+              .buttons {
+                margin-top: -6px;
+              }
+              button {
+                background: $bg-color-light;
+                border: none;
+                color: white;
+                z-index: 10;
+                font-size: 14px;
+                margin-bottom: 0px;
+                margin-right: 0px;
+                transition: all 0.2s ease;
+
+                &:hover {
+                  background-color: #2e3133;
+                }
+
+                &.is-selected {
+                  background: #5d5d5d;
+                }
+
+                svg {
+                  width: 15px;
+                  height: 15px;
+                }
+
+                &.todo {
+                  svg {
+                    color: grey;
+                  }
+                }
+
+                &.doing {
+                  svg {
+                    color: rgb(255, 188, 38);
+                  }
+                }
+
+                &.done {
+                  svg {
+                    color: greenyellow;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .edit-cta {
+      width: 90%;
+      display: flex;
+      justify-content: flex-end;
+
+      .save,
+      .cancel {
+        margin-left: 10px;
+        border: 1px solid transparent;
+        svg {
+          margin-right: 4px;
+        }
+        background-color: $bg-color-light;
+        color: white;
+        transition: all 0.2s ease;
+
+        &:hover {
+          border: 1px solid #808080;
+        }
+      }
+
+      .cancel {
+        background-color: transparent;
+      }
+
+      .save svg {
+        color: greenyellow;
+      }
+
+      .cancel svg {
+        color: $cta-color;
+      }
+    }
+  }
 }

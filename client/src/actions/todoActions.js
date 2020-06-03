@@ -6,6 +6,7 @@ import {
   GET_TODOS,
   SET_TODO_STATUS,
   SET_MODAL_VISIBILITY,
+  EDIT_TODO,
 } from "./types";
 
 export const addTodo = (todo) => async (dispatch) => {
@@ -191,4 +192,44 @@ export const toggleModal = (data) => (dispatch) => {
     type: SET_MODAL_VISIBILITY,
     payload: data,
   });
+};
+
+export const editTodo = (data) => async (dispatch) => {
+  var config = {
+    withCredentials: true,
+    headers: {
+      "x-access-token": localStorage.getItem("JWT"),
+      "Content-Type": "application/json",
+    },
+  };
+
+  dispatch({
+    type: EDIT_TODO,
+    payload: [],
+    fetching: true,
+  });
+
+  await axios
+    .post(getPath("/api/todos/edittodo"), data, config)
+    .then((res) => {
+      dispatch({
+        type: EDIT_TODO,
+        payload: res.data.message,
+        fetching: false,
+      });
+    })
+    .catch((err) => {
+      if (typeof err.response === "object") {
+        dispatch({
+          type: GET_ERRORS,
+          payload: {
+            message: err.response.data.message,
+            timestamp: Date.now(),
+            fetching: false,
+          },
+        });
+      } else {
+        console.log(err);
+      }
+    });
 };

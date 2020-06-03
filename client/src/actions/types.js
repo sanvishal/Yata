@@ -12,3 +12,4 @@ export const SET_TODO_STATUS = "SET_TODO_STATUS";
 
 export const SELECTED_MODE = "SELECTED_MODE";
 export const SET_MODAL_VISIBILITY = "SET_MODAL_VISIBILITY";
+export const EDIT_TODO = "EDIT_TODO";

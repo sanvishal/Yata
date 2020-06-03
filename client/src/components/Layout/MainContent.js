@@ -77,6 +77,7 @@ class MainContent extends Component {
     for (let idx in todos) {
       if (todos[idx]._id === this.props.todos.updated_todo._id) {
         todos[idx].status = status;
+        todos[idx].done_date = moment().toISOString();
         break;
       }
     }
@@ -116,6 +117,7 @@ class MainContent extends Component {
     }
 
     if (prevProps.todos.todos !== this.props.todos.todos) {
+      console.log(this.props.todos);
       if (this.props.todos.todos.length) {
         this.seperateTodosByDate();
       } else {

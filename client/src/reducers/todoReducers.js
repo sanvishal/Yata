@@ -3,6 +3,7 @@ import {
   GET_TODOS,
   SET_TODO_STATUS,
   SET_MODAL_VISIBILITY,
+  EDIT_TODO,
 } from "../actions/types";
 
 let initialState = {
@@ -36,6 +37,13 @@ export default function (state = initialState, action) {
       return {
         ...state,
         edit_todo: action.payload,
+      };
+
+    case EDIT_TODO:
+      return {
+        ...state,
+        updated_todo: action.payload,
+        fetching: action.fetching,
       };
     default:
       return state;

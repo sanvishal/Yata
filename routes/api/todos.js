@@ -377,8 +377,10 @@ router.post("/getuntrackedtodos", (req, res) => {
 });
 
 router.post("/edittodo", (req, res) => {
-  const { userid, todoid, newtodo } = req.body;
-  let archived = req.body.archived || false;
+  const { userid, todoid } = req.body;
+  let newtodo = req.body.newtodo;
+  newtodo["archived"] = newtodo.archived || false;
+  console.log(newtodo);
 
   if (!ObjectId.isValid(userid)) {
     return res.status(400).json({
@@ -409,7 +411,9 @@ router.post("/edittodo", (req, res) => {
               deadline: newtodo.deadline,
               notes: newtodo.notes,
               task: newtodo.task,
-              archived,
+              archived: newtodo.archived,
+              donr: newtodo.done,
+              status: newtodo.status,
             },
           },
           { new: true }
