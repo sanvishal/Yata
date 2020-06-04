@@ -72,7 +72,10 @@ class DateTodos extends Component {
   componentDidUpdate(prevProps) {
     if (
       prevProps.projects.selectedMode !== this.props.projects.selectedMode ||
-      prevProps.selectedDate !== this.props.selectedDate
+      prevProps.selectedDate !== this.props.selectedDate ||
+      (prevProps.todos.edit_todo.modal_open === true &&
+        this.props.todos.edit_todo.modal_open === false &&
+        this.props.todos.edit_todo.refetch)
     ) {
       this.setState({ todos: [] });
       this.fetchOnUpdate();
@@ -100,13 +103,33 @@ class DateTodos extends Component {
     const { currentView } = this.props;
     switch (currentView) {
       case "TODO":
-        return todos.filter((todo) => todo.status === 0, todos);
+        return todos.filter(
+          (todo) =>
+            todo.status === 0 &&
+            (todo.archived === false || todo.archived === null),
+          todos
+        );
       case "DOING":
-        return todos.filter((todo) => todo.status === 1, todos);
+        return todos.filter(
+          (todo) =>
+            todo.status === 1 &&
+            (todo.archived === false || todo.archived === null),
+          todos
+        );
       case "DONE":
-        return todos.filter((todo) => todo.status === 2, todos);
+        return todos.filter(
+          (todo) =>
+            todo.status === 2 &&
+            (todo.archived === false || todo.archived === null),
+          todos
+        );
+      case "ARCHIVED":
+        return todos.filter((todo) => todo.archived === true, todos);
       default:
-        return todos;
+        return todos.filter(
+          (todo) => todo.archived === false || todo.archived === null,
+          todos
+        );
     }
   }
 
@@ -123,6 +146,7 @@ class DateTodos extends Component {
                 id={todo._id}
                 deadline={todo.deadline}
                 className="fadeInUp"
+                archived={todo.archived}
                 key={key}
               />
             );
@@ -184,6 +208,22 @@ class DateTodos extends Component {
                   "You didn't complete any tasks early for tomorrow"}
                 {this.props.projects.selectedMode === "UPCOMING" &&
                   "There are no completed tasks dated " +
+                    moment(this.props.selectedDate).format("DD MMM")}
+              </span>
+            </div>
+          );
+
+        case "ARCHIVED":
+          return (
+            <div className="nothing">
+              <div className="illustration">😵</div>
+              <span>
+                {this.props.projects.selectedMode === "TODAY" &&
+                  "You did archive any tasks today"}
+                {this.props.projects.selectedMode === "TOMORROW" &&
+                  "You did not archive any tasks for tomorrow"}
+                {this.props.projects.selectedMode === "UPCOMING" &&
+                  "There are no archived tasks dated " +
                     moment(this.props.selectedDate).format("DD MMM")}
               </span>
             </div>

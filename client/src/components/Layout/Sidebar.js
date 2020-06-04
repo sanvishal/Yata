@@ -101,10 +101,11 @@ class Sidebar extends Component {
         Toast.fire({
           title: this.props.errors.message,
         });
+        this.setState({ loading: false });
       }
     }
     Toast.fire({
-      title: "Enter a valid project name",
+      title: "Enter a valid & unique project name",
     });
   };
 

@@ -18,7 +18,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 75%;
+    width: 60%;
     height: 75%;
     background-color: $bg-color-dark;
     border-radius: 5px;
@@ -60,10 +60,27 @@
           font-size: 16px;
           border: none;
 
+          &.is-loading::after {
+            border-right-color: transparent !important;
+            border-top-color: transparent !important;
+          }
+
           svg {
             width: 16px;
             height: 16px;
             margin-right: 4px;
+          }
+
+          &.is-loading.delete-todo::after {
+            border: 2px solid $cta-color !important;
+            border-right-color: transparent !important;
+            border-top-color: transparent !important;
+          }
+
+          &.is-loading.archive-todo::after {
+            border: 2px solid rgb(109, 172, 203) !important;
+            border-right-color: transparent !important;
+            border-top-color: transparent !important;
           }
 
           &.archive-todo {
@@ -310,6 +327,12 @@
         &:hover {
           border: 1px solid #808080;
         }
+      }
+
+      .is-loading.save::after {
+        border: 2px solid greenyellow !important;
+        border-right-color: transparent !important;
+        border-top-color: transparent !important;
       }
 
       .cancel {

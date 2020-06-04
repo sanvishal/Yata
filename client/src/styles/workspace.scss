@@ -84,9 +84,9 @@
       }
 
       &__projects-list {
-        max-height: 45vh;
+        max-height: 37vh;
         overflow: auto;
-        height: 45vh;
+        height: 37vh;
         .sidebar__project {
           color: white;
           margin: 6px 0px 10px 0px;
@@ -363,6 +363,12 @@
           &.done {
             svg {
               color: greenyellow;
+            }
+          }
+
+          &.archived {
+            svg {
+              color: rgb(109, 172, 203);
             }
           }
         }

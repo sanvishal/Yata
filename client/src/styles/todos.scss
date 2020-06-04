@@ -340,6 +340,10 @@
       margin-top: 4px;
       cursor: pointer;
 
+      &.delete {
+        color: $cta-color;
+      }
+
       &.todo {
         color: grey;
       }
@@ -369,6 +373,13 @@
       justify-content: center;
       align-items: center;
       align-content: center;
+
+      .unarchive-todo {
+        margin-right: 6px;
+        button {
+          background: $bg-color-light;
+        }
+      }
 
       .edit-todo-toggle {
         color: #525457;
@@ -401,6 +412,12 @@
 
       .edit-todo-toggle {
         opacity: 1;
+      }
+
+      .unarchive-todo {
+        button {
+          background: $bg-color-dark;
+        }
       }
     }
   }

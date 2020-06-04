@@ -95,12 +95,6 @@ router.post("/addtodo", (req, res) => {
 
 router.use("/gettodos", (req, res) => {
   const { id, projectid } = req.body;
-  let archived = [];
-  if (req.body.archived) {
-    archived = [req.body.archived, null];
-  } else {
-    archived = [false, null];
-  }
 
   if (!ObjectId.isValid(id)) {
     return res.status(400).json({
@@ -121,7 +115,6 @@ router.use("/gettodos", (req, res) => {
           Todo.find({
             userid: id,
             projects: { $elemMatch: { projectid: projectid } },
-            archived: { $in: archived },
           })
             .then((todos) => {
               return res.json({
@@ -139,7 +132,6 @@ router.use("/gettodos", (req, res) => {
             });
         } else {
           Todo.find({
-            archived,
             userid: id,
           })
             .then((todos) => {
@@ -260,12 +252,6 @@ router.post("/setstatus", (req, res) => {
 
 router.post("/gettodosbydate", (req, res) => {
   const { id, date } = req.body;
-  let archived = [];
-  if (req.body.archived) {
-    archived = [req.body.archived, null];
-  } else {
-    archived = [false, null];
-  }
 
   let start = moment(date).startOf("day").toISOString();
   let end = moment(date).endOf("day").toISOString();
@@ -299,7 +285,6 @@ router.post("/gettodosbydate", (req, res) => {
           Todo.find({
             userid: id,
             deadline: { $gte: start, $lte: end },
-            archived: { $in: archived },
           })
             .then((result) => {
               res.json({
@@ -329,12 +314,6 @@ router.post("/gettodosbydate", (req, res) => {
 
 router.post("/getuntrackedtodos", (req, res) => {
   const { userid } = req.body;
-  let archived = [];
-  if (req.body.archived) {
-    archived = [req.body.archived, null];
-  } else {
-    archived = [false, null];
-  }
 
   if (!ObjectId.isValid(userid)) {
     return res.status(400).json({
@@ -355,7 +334,6 @@ router.post("/getuntrackedtodos", (req, res) => {
           userid,
           deadline: null,
           projects: [],
-          archived: { $in: archived },
         })
           .then((result) => {
             res.json({
@@ -380,6 +358,7 @@ router.post("/edittodo", (req, res) => {
   const { userid, todoid } = req.body;
   let newtodo = req.body.newtodo;
   newtodo["archived"] = newtodo.archived || false;
+
   console.log(newtodo);
 
   if (!ObjectId.isValid(userid)) {
@@ -440,6 +419,8 @@ router.post("/edittodo", (req, res) => {
 router.post("/archivetodo", (req, res) => {
   const { userid, todoid, archived } = req.body;
 
+  console.log(req.body);
+
   if (!ObjectId.isValid(userid)) {
     return res.status(400).json({
       status: "error",
@@ -489,7 +470,7 @@ router.post("/archivetodo", (req, res) => {
   }
 });
 
-router.post("/deletetodo", () => {
+router.post("/deletetodo", (req, res) => {
   const { userid, todoid } = req.body;
 
   if (!ObjectId.isValid(userid)) {
@@ -517,7 +498,7 @@ router.post("/deletetodo", () => {
           .then((updatedTodo) => {
             return res.json({
               status: "success",
-              message: updatedTodo,
+              message: todoid,
               type: "todo",
             });
           })

@@ -19,7 +19,13 @@ import {
   Trash2,
   Archive,
 } from "react-feather";
-import { toggleModal, editTodo, getTodos } from "../actions/todoActions";
+import {
+  toggleModal,
+  editTodo,
+  getTodos,
+  archiveTodo,
+  deleteTodo,
+} from "../actions/todoActions";
 import { addProject } from "../actions/projectActions";
 import getRandomColor from "../utils/getRandomColor";
 import TextInput from "react-autocomplete-input";
@@ -58,6 +64,24 @@ const getFormattedDiffDay = (from, to) => {
   }
 };
 
+const deepCompare = (obj1, obj2) => {
+  for (var p in obj1) {
+    if (obj1.hasOwnProperty(p) !== obj2.hasOwnProperty(p)) return false;
+
+    switch (typeof obj1[p]) {
+      case "object":
+        if (!deepCompare(obj1[p], obj2[p])) return false;
+        break;
+      default:
+        if (obj1[p] != obj2[p]) return false;
+    }
+  }
+  for (var p in obj2) {
+    if (typeof obj1[p] == "undefined") return false;
+  }
+  return true;
+};
+
 class EditTodo extends Component {
   state = {
     deadlineEditorOpen: false,
@@ -66,6 +90,9 @@ class EditTodo extends Component {
     editedTodo: {},
     projectNames: [],
     calendarOpen: false,
+    deleting: false,
+    archiving: false,
+    saving: false,
   };
 
   componentDidUpdate(prevProps) {
@@ -110,7 +137,17 @@ class EditTodo extends Component {
     });
   };
 
-  onClickCloseModal(e) {
+  _deleteTodo = async () => {
+    this.setState({ deleting: true });
+    await this.props.deleteTodo({
+      userid: this.props.auth.user.id,
+      todoid: this.state.selectedTodo._id,
+    });
+    this.setState({ deleting: false });
+    this.onClickCloseModal();
+  };
+
+  onClickCloseModal(e, refetch = false) {
     this.setState(
       {
         selectedTodo: {},
@@ -121,6 +158,7 @@ class EditTodo extends Component {
         this.props.toggleModal({
           modal_open: false,
           id: "",
+          refetch: refetch,
         });
       }
     );
@@ -217,6 +255,7 @@ class EditTodo extends Component {
   };
 
   _saveEditedTodo = async () => {
+    this.setState({ saving: true });
     await this.props.editTodo({
       userid: this.props.auth.user.id,
       todoid: this.state.selectedTodo._id,
@@ -229,13 +268,39 @@ class EditTodo extends Component {
         break;
       }
     }
-    this.fetchTodos();
-    this.onClickCloseModal();
+    if (this.props.projects.selectedMode === "PROJECTS") {
+      this.fetchTodos();
+    }
+    this.setState({ saving: false });
+
+    this.onClickCloseModal(true);
   };
 
   saveEditedTodo = async () => {
-    await this.addNonExistingProjects();
-    await this._saveEditedTodo();
+    if (!deepCompare(this.state.selectedTodo, this.state.editedTodo)) {
+      await this.addNonExistingProjects();
+      await this._saveEditedTodo();
+    } else {
+      this.onClickCloseModal(false);
+    }
+  };
+
+  _archiveTodo = async (todoid, archived) => {
+    this.setState({ archiving: true });
+    await this.props.archiveTodo({
+      userid: this.props.auth.user.id,
+      todoid,
+      archived: !archived,
+    });
+    this.setState({ archiving: false });
+    this.onClickCloseModal();
+  };
+
+  onClickArchiveTodo = async () => {
+    await this._archiveTodo(
+      this.state.selectedTodo._id,
+      this.state.selectedTodo.archived
+    );
   };
 
   renderDeadlineEditor(deadline, deadlineEditorOpen) {
@@ -375,12 +440,24 @@ class EditTodo extends Component {
             <div className="top-bar">
               <div className="title">Edit Task</div>
               <div className="push-right">
-                <button className="button delete-todo">
-                  <Trash2 />
+                <button
+                  className={
+                    "button delete-todo " +
+                    (this.state.deleting ? "is-loading" : "")
+                  }
+                  onClick={(e) => this._deleteTodo()}
+                >
+                  {!this.state.deleting && <Trash2 />}
                   Delete
                 </button>
-                <button className="button archive-todo">
-                  <Archive />
+                <button
+                  className={
+                    "button archive-todo " +
+                    (this.state.archiving ? "is-loading" : "")
+                  }
+                  onClick={(e) => this.onClickArchiveTodo(e)}
+                >
+                  {!this.state.archiving && <Archive />}
                   Archive
                 </button>
                 <div className="close-button">
@@ -541,10 +618,12 @@ class EditTodo extends Component {
                 Cancel
               </button>
               <button
-                className="button save"
+                className={
+                  "button save " + (this.state.saving ? "is-loading" : "")
+                }
                 onClick={(e) => this.saveEditedTodo(e)}
               >
-                <Check />
+                {!this.state.saving && <Check />}
                 Save
               </button>
             </div>
@@ -566,4 +645,6 @@ export default connect(mapStateToProps, {
   editTodo,
   addProject,
   getTodos,
+  archiveTodo,
+  deleteTodo,
 })(EditTodo);

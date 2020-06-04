@@ -1,6 +1,11 @@
 import React, { Component } from "react";
-import { CheckCircle, Circle, PlayCircle, Edit } from "react-feather";
-import { setStatus, toggleModal } from "../actions/todoActions";
+import { CheckCircle, Circle, PlayCircle, Edit, Trash2 } from "react-feather";
+import {
+  setStatus,
+  toggleModal,
+  archiveTodo,
+  deleteTodo,
+} from "../actions/todoActions";
 import { connect } from "react-redux";
 import Toast from "./ToastNotification";
 import Reward from "react-rewards";
@@ -47,11 +52,35 @@ class Todo extends Component {
     this.props.toggleModal({
       modal_open: true,
       id: this.props.id,
+      refetch: false,
     });
   }
 
+  _archiveTodo = async (todoid, archived) => {
+    await this.props.archiveTodo({
+      userid: this.props.auth.user.id,
+      todoid,
+      archived: !archived,
+    });
+    this.setState({ loading: false });
+  };
+
+  onClickArchiveTodo = async () => {
+    this.setState({ loading: true });
+    await this._archiveTodo(this.props.id, this.props.archived);
+  };
+
+  _deleteTodo = async () => {
+    this.setState({ loading: true });
+    await this.props.deleteTodo({
+      userid: this.props.auth.user.id,
+      todoid: this.props.id,
+    });
+    this.setState({ loading: false });
+  };
+
   render() {
-    const { task, id, status } = this.props;
+    const { task, id, status, archived } = this.props;
     return (
       <div className={"todo-list-container__todo"}>
         <Reward
@@ -69,7 +98,9 @@ class Todo extends Component {
           }}
         >
           {!this.state.loading ? (
-            status === 0 ? (
+            archived ? (
+              <Trash2 className="delete" onClick={(e) => this._deleteTodo()} />
+            ) : status === 0 ? (
               <>
                 <Circle
                   className="todo"
@@ -97,12 +128,23 @@ class Todo extends Component {
         </Reward>
         <div className="task">{task}</div>
         <div className="todo-side-options">
-          <div
-            className="edit-todo-toggle"
-            onClick={(e) => this.onClickEditTodo(e)}
-          >
-            <Edit />
-          </div>
+          {!archived ? (
+            <div
+              className="edit-todo-toggle"
+              onClick={(e) => this.onClickEditTodo(e)}
+            >
+              <Edit />
+            </div>
+          ) : (
+            <div className="unarchive-todo">
+              <button
+                className="button is-dark is-small is-rounded"
+                onClick={(e) => this.onClickArchiveTodo(e)}
+              >
+                Unarchive
+              </button>
+            </div>
+          )}
           {this.props.deadline ? (
             <div className="deadline">
               {moment(this.props.deadline).format("DD MMM")}
@@ -122,4 +164,9 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { setStatus, toggleModal })(Todo);
+export default connect(mapStateToProps, {
+  setStatus,
+  toggleModal,
+  archiveTodo,
+  deleteTodo,
+})(Todo);

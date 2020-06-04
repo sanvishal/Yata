@@ -7,6 +7,7 @@ import {
   SET_TODO_STATUS,
   SET_MODAL_VISIBILITY,
   EDIT_TODO,
+  DELETED_TODO,
 } from "./types";
 
 export const addTodo = (todo) => async (dispatch) => {
@@ -226,6 +227,70 @@ export const editTodo = (data) => async (dispatch) => {
             message: err.response.data.message,
             timestamp: Date.now(),
             fetching: false,
+          },
+        });
+      } else {
+        console.log(err);
+      }
+    });
+};
+
+export const archiveTodo = (data) => async (dispatch) => {
+  var config = {
+    withCredentials: true,
+    headers: {
+      "x-access-token": localStorage.getItem("JWT"),
+      "Content-Type": "application/json",
+    },
+  };
+
+  await axios
+    .post(getPath("/api/todos/archivetodo"), data, config)
+    .then((res) => {
+      dispatch({
+        type: EDIT_TODO,
+        payload: res.data.message,
+      });
+    })
+    .catch((err) => {
+      if (typeof err.response === "object") {
+        dispatch({
+          type: GET_ERRORS,
+          payload: {
+            message: err.response.data.message,
+            timestamp: Date.now(),
+          },
+        });
+      } else {
+        console.log(err);
+      }
+    });
+};
+
+export const deleteTodo = (data) => async (dispatch) => {
+  var config = {
+    withCredentials: true,
+    headers: {
+      "x-access-token": localStorage.getItem("JWT"),
+      "Content-Type": "application/json",
+    },
+  };
+
+  await axios
+    .post(getPath("/api/todos/deletetodo"), data, config)
+    .then((res) => {
+      dispatch({
+        type: DELETED_TODO,
+        payload: res.data.message,
+      });
+    })
+    .catch((err) => {
+      if (typeof err.response === "object") {
+        dispatch({
+          type: GET_ERRORS,
+          payload: {
+            message: err.response.data.message,
+            timestamp: Date.now(),
           },
         });
       } else {

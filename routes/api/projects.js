@@ -35,7 +35,8 @@ router.use(function (req, res, next) {
 });
 
 router.post("/addproject", (req, res) => {
-  const { id, projectname, color } = req.body;
+  const { id, color } = req.body;
+  let projectname = req.body.projectname;
 
   if (isEmpty(projectname) || !ObjectId.isValid(id)) {
     return res.status(400).json({
@@ -44,6 +45,7 @@ router.post("/addproject", (req, res) => {
       status: "error",
     });
   } else {
+    projectname = projectname.replace(/\s/g, "");
     User.findOne({ _id: id }).then((user) => {
       if (user) {
         let newProject = new Project({
@@ -51,7 +53,6 @@ router.post("/addproject", (req, res) => {
           color,
           userid: user._id,
         });
-        console.log(newProject);
 
         newProject
           .save()

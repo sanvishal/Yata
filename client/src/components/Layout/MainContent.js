@@ -16,6 +16,7 @@ import {
   Home,
   Calendar as Cal,
   X,
+  Archive,
 } from "react-feather";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -61,27 +62,39 @@ class MainContent extends Component {
   };
 
   recalculateProgressOnUpdate() {
-    let total = this.props.todos.todos.length,
+    let total = 0,
       done = 0;
     this.props.todos.todos.forEach((todo) => {
-      if (todo.status === 2) {
-        done++;
+      if (!todo.archived) {
+        total++;
+        if (todo.status === 2) {
+          done++;
+        }
       }
     });
     this.getPercentageCompletion(done, total);
   }
 
-  updatePropsOnStatusChange() {
-    const { status } = this.props.todos.updated_todo;
+  updatePropsOnDataChange() {
+    const { updated_todo } = this.props.todos;
     let todos = this.props.todos.todos;
+    let isArchiveToggled = false;
     for (let idx in todos) {
       if (todos[idx]._id === this.props.todos.updated_todo._id) {
-        todos[idx].status = status;
+        todos[idx].status = updated_todo.status;
         todos[idx].done_date = moment().toISOString();
+        if (todos[idx].archived !== updated_todo.archived) {
+          todos[idx].archived = updated_todo.archived;
+          isArchiveToggled = true;
+        }
+
         break;
       }
     }
     this.props.todos.todos = todos;
+    if (isArchiveToggled) {
+      this.seperateTodosByDate();
+    }
   }
 
   updatePropsOnTodoAdd() {
@@ -99,6 +112,19 @@ class MainContent extends Component {
     });
   }
 
+  updatePropsonTodoDelete(deleted_todo) {
+    let newTodos = this.props.todos.todos;
+    newTodos.forEach((todo, idx, obj) => {
+      if (todo._id === deleted_todo) {
+        obj.splice(idx, 1);
+        return;
+      }
+    });
+    this.props.todos.todos = newTodos;
+    this.seperateTodosByDate();
+    this.recalculateProgressOnUpdate();
+  }
+
   componentDidUpdate(prevProps) {
     if (
       prevProps.projects.selectedProject !== this.props.projects.selectedProject
@@ -111,13 +137,12 @@ class MainContent extends Component {
 
     if (prevProps.todos.updated_todo !== this.props.todos.updated_todo) {
       if (Object.keys(this.props.todos.updated_todo).length) {
-        this.updatePropsOnStatusChange();
+        this.updatePropsOnDataChange();
         this.recalculateProgressOnUpdate();
       }
     }
 
     if (prevProps.todos.todos !== this.props.todos.todos) {
-      console.log(this.props.todos);
       if (this.props.todos.todos.length) {
         this.seperateTodosByDate();
       } else {
@@ -134,6 +159,13 @@ class MainContent extends Component {
         }
       }
     }
+
+    if (prevProps.todos.deleted_todo !== this.props.todos.deleted_todo) {
+      if (this.props.todos.deleted_todo.length) {
+        const { deleted_todo } = this.props.todos;
+        this.updatePropsonTodoDelete(deleted_todo);
+      }
+    }
   }
 
   getPercentageCompletion(completed, total) {
@@ -146,13 +178,33 @@ class MainContent extends Component {
     const { currentView } = this.state;
     switch (currentView) {
       case "TODO":
-        return todos.filter((todo) => todo.status === 0, todos);
+        return todos.filter(
+          (todo) =>
+            todo.status === 0 &&
+            (todo.archived === false || todo.archived === null),
+          todos
+        );
       case "DOING":
-        return todos.filter((todo) => todo.status === 1, todos);
+        return todos.filter(
+          (todo) =>
+            todo.status === 1 &&
+            (todo.archived === false || todo.archived === null),
+          todos
+        );
       case "DONE":
-        return todos.filter((todo) => todo.status === 2, todos);
+        return todos.filter(
+          (todo) =>
+            todo.status === 2 &&
+            (todo.archived === false || todo.archived === null),
+          todos
+        );
+      case "ARCHIVED":
+        return todos.filter((todo) => todo.archived === true, todos);
       default:
-        return todos;
+        return todos.filter(
+          (todo) => todo.archived === false || todo.archived === null,
+          todos
+        );
     }
   }
 
@@ -181,13 +233,13 @@ class MainContent extends Component {
     });
   }
 
-  renderTodos(todos, isMycategoryOpen) {
+  renderTodos(todos, isMyCategoryOpen) {
     return (
       <div
         className="todo-list-container"
         style={{
           //maxHeight: isMycategoryOpen ? "200vh" : "0vh",
-          display: isMycategoryOpen ? "block" : "none",
+          display: isMyCategoryOpen ? "block" : "none",
         }}
       >
         {todos.map((todo, key) => {
@@ -197,6 +249,7 @@ class MainContent extends Component {
               status={todo.status}
               id={todo._id}
               deadline={todo.deadline}
+              archived={todo.archived}
               className="fadeInUp"
               key={key}
             />
@@ -273,6 +326,19 @@ class MainContent extends Component {
             </span>
             <span>Done</span>
           </button>
+          <button
+            className={
+              "button archived" +
+              (this.state.currentView === "ARCHIVED" ? " is-selected" : "")
+            }
+            onClick={(e) => this.changeView(e, "ARCHIVED")}
+            disabled={this.state.fetching || this.props.todos.fetching}
+          >
+            <span className="icon is-small">
+              <Archive />
+            </span>
+            <span>Archived</span>
+          </button>
         </div>
       </div>
     );
@@ -316,6 +382,16 @@ class MainContent extends Component {
               There are no tasks in this tag, tag{" "}
               {"#" + this.props.projects.selectedProject.projectname} while
               adding a task
+            </span>
+          </div>
+        );
+
+      case "ARCHIVED":
+        return (
+          <div className="nothing">
+            <div className="illustration">😵</div>
+            <span>
+              You did not archive any todos; to archive, go to Edit Todo.
             </span>
           </div>
         );

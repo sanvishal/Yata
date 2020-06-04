@@ -21,7 +21,12 @@ class UntrackedTodos extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.projects.selectedMode !== this.props.projects.selectedMode) {
+    if (
+      prevProps.projects.selectedMode !== this.props.projects.selectedMode ||
+      (prevProps.todos.edit_todo.modal_open === true &&
+        this.props.todos.edit_todo.modal_open === false &&
+        this.props.todos.edit_todo.refetch)
+    ) {
       this.fetchUntrackedTodos();
     }
 
@@ -46,13 +51,33 @@ class UntrackedTodos extends Component {
     const { currentView } = this.props;
     switch (currentView) {
       case "TODO":
-        return todos.filter((todo) => todo.status === 0, todos);
+        return todos.filter(
+          (todo) =>
+            todo.status === 0 &&
+            (todo.archived === false || todo.archived === null),
+          todos
+        );
       case "DOING":
-        return todos.filter((todo) => todo.status === 1, todos);
+        return todos.filter(
+          (todo) =>
+            todo.status === 1 &&
+            (todo.archived === false || todo.archived === null),
+          todos
+        );
       case "DONE":
-        return todos.filter((todo) => todo.status === 2, todos);
+        return todos.filter(
+          (todo) =>
+            todo.status === 2 &&
+            (todo.archived === false || todo.archived === null),
+          todos
+        );
+      case "ARCHIVED":
+        return todos.filter((todo) => todo.archived === true, todos);
       default:
-        return todos;
+        return todos.filter(
+          (todo) => todo.archived === false || todo.archived === null,
+          todos
+        );
     }
   }
 
@@ -69,6 +94,7 @@ class UntrackedTodos extends Component {
                 id={todo._id}
                 deadline={todo.deadline}
                 className="fadeInUp"
+                archived={todo.archived}
                 key={key}
               />
             );
@@ -110,6 +136,14 @@ class UntrackedTodos extends Component {
                 There are no untracked tasks; to add one, just type in a task
                 without a tag and a deadline
               </span>
+            </div>
+          );
+
+        case "ARCHIVED":
+          return (
+            <div className="nothing">
+              <div className="illustration">😵</div>
+              <span>There are no archived tasks</span>
             </div>
           );
 
