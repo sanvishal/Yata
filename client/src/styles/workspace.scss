@@ -274,8 +274,9 @@
       align-items: center;
       align-content: center;
       position: relative;
-      .calender-toggle {
-        margin-right: 20px;
+
+      .calender-toggle,
+      .delete-project {
         height: 35px;
         background: $bg-color-light;
         border: none;
@@ -312,6 +313,21 @@
           }
         }
       }
+
+      .calender-toggle {
+        margin-right: 20px;
+      }
+
+      .delete-project {
+        margin-left: 20px;
+        background: #fd554f10;
+        color: $cta-color;
+
+        &:hover {
+          background: #fd554f30;
+        }
+      }
+
       .buttons {
         justify-content: flex-end;
 

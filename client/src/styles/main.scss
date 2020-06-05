@@ -28,17 +28,35 @@ html {
 .swal2-popup {
   background: $bg-color-light !important;
   box-shadow: none !important;
-  border: 1px solid #3f3f3f;
+  border-bottom: 2px solid $cta-color;
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
-  border-bottom-color: $cta-color;
-  border-bottom-width: 2px;
+  &.swal2-modal {
+    .swal2-title {
+      font-size: 1.3em;
+    }
+
+    .swal2-confirm {
+      background-color: rgba(109, 172, 203, 0.129) !important;
+      color: rgb(109, 172, 203);
+    }
+
+    .swal2-cancel {
+      background-color: #fd554f10 !important;
+      color: #fd554f;
+    }
+  }
   .swal2-title {
     color: #fff !important;
   }
   &__success {
     border-bottom-color: greenyellow !important;
   }
+}
+
+.swal2-icon.swal2-warning {
+  color: $cta-color;
+  border-color: $cta-color;
 }
 
 .dropdown-content {

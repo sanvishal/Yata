@@ -8,6 +8,7 @@ import {
   SELECTED_PROJECT,
   SELECTED_MODE,
   GET_TODOS,
+  DELETED_PROJECT,
 } from "./types";
 
 export const addProject = (projectData) => async (dispatch) => {
@@ -117,5 +118,39 @@ export const getProgress = async (data, done) => {
     })
     .catch((err) => {
       console.log(err);
+    });
+};
+
+export const deleteProject = (project) => async (dispatch) => {
+  var config = {
+    withCredentials: true,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "x-access-token": localStorage.getItem("JWT"),
+    },
+  };
+
+  await axios
+    .post(getPath("/api/projects/deleteproject"), project, config)
+    .then((res) => {
+      // console.log(res.data);
+      dispatch({
+        type: DELETED_PROJECT,
+        payload: res.data.message,
+      });
+    })
+    .catch((err) => {
+      if (typeof err.response === "object") {
+        dispatch({
+          type: GET_ERRORS,
+          payload: {
+            message: err.response.data.message,
+            timestamp: Date.now(),
+          },
+        });
+      } else {
+        console.log(err);
+      }
     });
 };

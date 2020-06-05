@@ -3,6 +3,7 @@ import {
   PROJECT_LIST,
   SELECTED_PROJECT,
   SELECTED_MODE,
+  DELETED_PROJECT,
 } from "../actions/types";
 
 let initialState = {
@@ -10,6 +11,7 @@ let initialState = {
   projects: [],
   selectedMode: "",
   selectedProject: {},
+  deleted_project: "",
 };
 
 export default function (state = initialState, action) {
@@ -35,6 +37,12 @@ export default function (state = initialState, action) {
       return {
         ...state,
         selectedMode: action.payload,
+      };
+
+    case DELETED_PROJECT:
+      return {
+        ...state,
+        deleted_project: action.payload,
       };
     default:
       return state;

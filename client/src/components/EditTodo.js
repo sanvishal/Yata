@@ -121,7 +121,10 @@ class EditTodo extends Component {
       });
     }
 
-    if (prevProps.projects.projects !== this.props.projects.projects) {
+    if (
+      prevProps.projects.projects !== this.props.projects.projects ||
+      prevProps.projects.new_project !== this.props.projects.new_project
+    ) {
       let projectNames = [];
       this.props.projects.projects.forEach((project) => {
         projectNames.push(project.projectname);

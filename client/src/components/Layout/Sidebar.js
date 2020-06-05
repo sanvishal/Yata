@@ -36,8 +36,18 @@ class Sidebar extends Component {
     });
     this.setState({ fetching: false });
     if (this.props.projects.projects.length) {
-      this.setState({ projects: this.props.projects.projects });
+      this.setState({ projects: this.props.projects.projects }, () => {
+        if (this.props.projects.selectedMode === "PROJECTS") {
+          this.setProject(null, this.state.projects.length - 1);
+        }
+      });
+
+      //if (changeMode) {
+      //this.props.setMode("EVERYTHING");
+      //} else {
       //this.setProject(null, 0);
+      //}
+    } else {
       this.props.setMode("EVERYTHING");
     }
   };
@@ -67,6 +77,14 @@ class Sidebar extends Component {
   componentDidUpdate(prevProps) {
     if (prevProps.projects.new_project !== this.props.projects.new_project) {
       this._fetchProjects();
+    }
+
+    if (
+      prevProps.projects.deleted_project !== this.props.projects.deleted_project
+    ) {
+      if (this.props.projects.deleted_project.length) {
+        this._fetchProjects();
+      }
     }
   }
 

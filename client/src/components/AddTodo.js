@@ -107,6 +107,11 @@ class AddTodo extends Component {
       projectNames.push(project.projectname);
     });
     this.setState({ projectNames });
+    if (this.props.projects.selectedMode === "PROJECTS") {
+      this.setState({
+        task: "#" + this.props.projects.selectedProject.projectname,
+      });
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -129,9 +134,17 @@ class AddTodo extends Component {
             },
           ],
         });
-      } else if (
-        prevProps.projects.selectedMode !== this.props.projects.selectedMode
-      ) {
+      }
+    }
+
+    if (
+      prevProps.projects.selectedProject !== this.props.projects.selectedProject
+    ) {
+      if (this.props.projects.selectedMode === "PROJECTS") {
+        this.setState({
+          task: "#" + this.props.projects.selectedProject.projectname,
+        });
+      } else {
         this.setState({
           task: "",
           projects: [],

@@ -159,4 +159,41 @@ router.post("/getprogress", (req, res) => {
   }
 });
 
+router.post("/deleteproject", (req, res) => {
+  const { id, projectid } = req.body;
+
+  if (!ObjectId.isValid(id) || !ObjectId.isValid(projectid)) {
+    return res.status(400).json({
+      type: "project",
+      message: "You are not authorised",
+      status: "error",
+    });
+  } else {
+    User.findOne({ _id: id }).then((user) => {
+      if (user) {
+        Todo.deleteMany({
+          userid: id,
+          projects: { $elemMatch: { projectid } },
+        }).then((done) => {
+          Project.findByIdAndRemove({ userid: id, _id: projectid }).then(
+            (_done) => {
+              return res.json({
+                type: "project",
+                message: projectid,
+                status: "success",
+              });
+            }
+          );
+        });
+      } else {
+        return res.status(400).json({
+          type: "project",
+          message: "You are not authorised",
+          status: "error",
+        });
+      }
+    });
+  }
+});
+
 module.exports = router;

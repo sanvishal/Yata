@@ -5,8 +5,9 @@ import UntrackedTodos from "./UntrackedTodos";
 import { connect } from "react-redux";
 import Todo from "../Todo";
 import { getTodos, getTodosByDate } from "../../actions/todoActions";
-import { getProgress } from "../../actions/projectActions";
+import { getProgress, deleteProject } from "../../actions/projectActions";
 import ProjectProgress from "../ProjectProgress";
+import Toast from "../ToastNotification";
 import moment from "moment";
 import {
   ChevronDown,
@@ -17,9 +18,11 @@ import {
   Calendar as Cal,
   X,
   Archive,
+  Trash2,
 } from "react-feather";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import Swal from "sweetalert2";
 
 class MainContent extends Component {
   state = {
@@ -270,6 +273,50 @@ class MainContent extends Component {
     this.setState({ calendarOpen: !this.state.calendarOpen });
   }
 
+  updatePropsonDeleteProject(id) {
+    let newProjects = this.props.projects.projects;
+    if (id.length) {
+      newProjects.forEach((project, idx, obj) => {
+        if (project.id === id) {
+          obj.splice(idx, 1);
+        }
+      });
+      this.props.projects.projects = newProjects;
+      Toast.fire({
+        title: "Safely deleted the project",
+        customClass: {
+          popup: "swal2-popup__success",
+        },
+      });
+    }
+  }
+
+  _deleteProject = async (projectid, id) => {
+    await this.props.deleteProject({
+      id,
+      projectid,
+    });
+    this.updatePropsonDeleteProject(this.props.projects.deleted_project);
+  };
+
+  onClickDeleteProject() {
+    Swal.fire({
+      title: "Do you really want to delete this project and linked tasks?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      focusConfirm: true,
+      confirmButtonText: "Do it!",
+    }).then((result) => {
+      if (result.value) {
+        this._deleteProject(
+          this.props.projects.selectedProject.id,
+          this.props.auth.user.id
+        );
+      }
+    });
+  }
+
   renderToggleViews() {
     return (
       <div className="toggle-views">
@@ -431,7 +478,18 @@ class MainContent extends Component {
             progress={this.state.completion}
             color={selectedProject.color}
           />
-          <div className="options-bar">{this.renderToggleViews()}</div>
+          <div className="options-bar">
+            {this.renderToggleViews()}
+            <button
+              className={"button delete-project"}
+              onClick={(e) => this.onClickDeleteProject()}
+            >
+              <span className="icon is-small">
+                <Trash2 />
+              </span>
+              <span>Delete</span>
+            </button>
+          </div>
           {!this.state.fetching ? (
             upcomingTodos.length || dueTodos.length || todayTodos.length ? (
               <div className="todos-container">
@@ -597,6 +655,8 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { getTodos, getTodosByDate })(
-  MainContent
-);
+export default connect(mapStateToProps, {
+  getTodos,
+  getTodosByDate,
+  deleteProject,
+})(MainContent);
