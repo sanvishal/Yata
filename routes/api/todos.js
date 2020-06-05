@@ -514,4 +514,96 @@ router.post("/deletetodo", (req, res) => {
   }
 });
 
+router.post("/dashboard", async (req, res) => {
+  const { userid } = req.body;
+
+  if (!ObjectId.isValid(userid)) {
+    return res.status(400).json({
+      status: "error",
+      message: "You are not authorised",
+      type: "auth",
+    });
+  } else {
+    let todoStats = Todo.aggregate([
+      {
+        $match: {
+          userid: ObjectId(userid),
+        },
+      },
+      {
+        $facet: {
+          todo: [
+            {
+              $match: { status: 0 },
+            },
+            { $count: "todo" },
+          ],
+          doing: [
+            {
+              $match: { status: 1 },
+            },
+            { $count: "doing" },
+          ],
+          done: [
+            {
+              $match: { status: 2 },
+            },
+            { $count: "done" },
+          ],
+        },
+      },
+    ]);
+
+    let frequentProjects = Todo.aggregate([
+      { $match: { userid: ObjectId(userid) } },
+      { $unwind: "$projects" },
+      { $group: { _id: "$projects.projectid", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 8 },
+      {
+        $lookup: {
+          from: "projects",
+          localField: "_id",
+          foreignField: "_id",
+          as: "project",
+        },
+      },
+      {
+        $project: {
+          _id: false,
+          count: true,
+          project: true,
+        },
+      },
+    ]);
+
+    try {
+      let r_todoStats = await todoStats.exec();
+      let r_frequentProjects = await frequentProjects.exec();
+      let result = {};
+      if (r_todoStats.length) {
+        result["todoStats"] = r_todoStats[0];
+      } else {
+        result["todoStats"] = [];
+      }
+      if (r_frequentProjects.length) {
+        result["frequentProjects"] = r_frequentProjects;
+      } else {
+        result["frequentProjects"] = [];
+      }
+      return res.json({
+        type: "dashboard",
+        message: result,
+        status: "success",
+      });
+    } catch (err) {
+      return res.status(500).json({
+        status: "error",
+        message: "Internel server error",
+        type: "todo",
+      });
+    }
+  }
+});
+
 module.exports = router;

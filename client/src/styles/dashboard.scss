@@ -1,0 +1,13 @@
+.dashboard {
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  .top-header {
+    .greet {
+      font-family: "Poppins", monospace;
+      font-size: 35px;
+      font-weight: bold;
+      color: rgb(236, 236, 236);
+    }
+  }
+}

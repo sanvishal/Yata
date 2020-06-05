@@ -4,6 +4,7 @@ import DateTodos from "./DateTodos";
 import UntrackedTodos from "./UntrackedTodos";
 import { connect } from "react-redux";
 import Todo from "../Todo";
+import Dashboard from "./Dashboard";
 import { getTodos, getTodosByDate } from "../../actions/todoActions";
 import { getProgress, deleteProject } from "../../actions/projectActions";
 import ProjectProgress from "../ProjectProgress";
@@ -644,7 +645,12 @@ class MainContent extends Component {
         </div>
       );
     } else {
-      return <div className="main-content-container">Everything</div>;
+      return (
+        <div className="main-content-container">
+          <AddTodo />
+          <Dashboard />
+        </div>
+      );
     }
   }
 }
