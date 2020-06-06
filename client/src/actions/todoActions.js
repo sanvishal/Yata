@@ -298,3 +298,26 @@ export const deleteTodo = (data) => async (dispatch) => {
       }
     });
 };
+
+export const getDashboard = async (userdata, done) => {
+  var config = {
+    withCredentials: true,
+    headers: {
+      "x-access-token": localStorage.getItem("JWT"),
+      "Content-Type": "application/json",
+    },
+  };
+
+  await axios
+    .post(getPath("/api/todos/dashboard"), userdata, config)
+    .then((res) => {
+      return done(res.data);
+    })
+    .catch((err) => {
+      if (typeof err.response === "object") {
+        return done(err.response.data.message);
+      } else {
+        console.log(err);
+      }
+    });
+};

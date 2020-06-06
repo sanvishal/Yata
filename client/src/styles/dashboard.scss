@@ -1,4 +1,6 @@
 .dashboard {
+  height: 90%;
+  overflow: auto;
   width: 90%;
   margin-left: auto;
   margin-right: auto;
@@ -8,6 +10,101 @@
       font-size: 35px;
       font-weight: bold;
       color: rgb(236, 236, 236);
+    }
+  }
+
+  .todo-stats-container {
+    height: 90%;
+    width: 350px;
+    margin-right: 80px;
+    display: inline-block;
+
+    .todo-stats {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: center;
+      align-content: center;
+      margin-top: 30px;
+
+      .stat-title {
+        font-size: 20px;
+        color: rgb(236, 236, 236);
+        font-weight: bold;
+        font-family: "Poppins", monospace;
+        margin-bottom: -20px;
+
+        svg {
+          color: rgb(230, 230, 230);
+          width: 18px;
+          height: 18px;
+          margin-bottom: -3px;
+          margin-left: 4px;
+        }
+      }
+
+      .stat-card {
+        border-radius: 10px;
+        margin-top: 50px;
+        width: 280px;
+        height: 130px;
+        position: relative;
+        .type {
+          font-family: "Poppins", monospace;
+          font-size: 32px;
+          position: absolute;
+          margin-left: 10px;
+          letter-spacing: 1px;
+        }
+
+        .accent-icon {
+          position: absolute;
+          opacity: 0.5;
+          margin-left: -15px;
+          margin-top: 95px;
+          transform: rotate(-21deg);
+          svg {
+            width: 50px;
+            height: 50px;
+          }
+        }
+
+        .data {
+          font-family: "Poppins", monospace;
+          font-size: 40px;
+          color: white;
+          font-weight: bold;
+          text-align: right;
+          margin-right: 10px;
+          margin-top: 65px;
+          letter-spacing: 1px;
+        }
+      }
+    }
+  }
+
+  .favorite-projects-container {
+    display: inline-grid;
+    height: 60vh;
+    overflow: auto;
+
+    .stat-card {
+      overflow: hidden;
+      transform: scale(1);
+      transition: all 0.3s ease-in-out;
+      .accent-icon {
+        margin-left: 200px !important;
+        margin-top: 50px !important;
+        svg {
+          width: 100px !important;
+          height: 100px !important;
+        }
+      }
+
+      &:hover {
+        transform: scale(1.05);
+      }
     }
   }
 }

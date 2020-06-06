@@ -34,7 +34,7 @@ router.use(function (req, res, next) {
   });
 });
 
-router.post("/addproject", (req, res) => {
+router.post("/addproject", async (req, res) => {
   const { id, color } = req.body;
   let projectname = req.body.projectname;
 
@@ -46,34 +46,46 @@ router.post("/addproject", (req, res) => {
     });
   } else {
     projectname = projectname.replace(/\s/g, "");
-    User.findOne({ _id: id }).then((user) => {
-      if (user) {
-        let newProject = new Project({
-          projectname,
-          color,
-          userid: user._id,
-        });
 
-        newProject
-          .save()
-          .then((newproj) => {
-            return res.json({
-              status: "success",
-              message: newproj,
-              type: "project",
+    await Project.findOne({ projectname, userid: id }).then((project) => {
+      if (!project) {
+        User.findOne({ _id: id }).then((user) => {
+          if (user) {
+            let newProject = new Project({
+              projectname,
+              color,
+              userid: user._id,
             });
-          })
-          .catch((err) => {
-            return res.status(500).json({
-              type: "project",
-              message: "can't create your project :(",
+
+            newProject
+              .save()
+              .then((newproj) => {
+                return res.json({
+                  status: "success",
+                  message: newproj,
+                  type: "project",
+                });
+              })
+              .catch((err) => {
+                console.log(err);
+                return res.status(500).json({
+                  type: "project",
+                  message: "can't create your project :(",
+                  status: "error",
+                });
+              });
+          } else {
+            return res.status(401).json({
+              type: "auth",
+              message: "You are not authorized to access",
               status: "error",
             });
-          });
+          }
+        });
       } else {
-        return res.status(401).json({
-          type: "auth",
-          message: "You are not authorized to access",
+        return res.status(500).json({
+          type: "project",
+          message: "can't create your project :(",
           status: "error",
         });
       }

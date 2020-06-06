@@ -517,6 +517,9 @@ router.post("/deletetodo", (req, res) => {
 router.post("/dashboard", async (req, res) => {
   const { userid } = req.body;
 
+  let start = moment().startOf("day").toISOString();
+  let end = moment().endOf("day").toISOString();
+
   if (!ObjectId.isValid(userid)) {
     return res.status(400).json({
       status: "error",
@@ -577,9 +580,41 @@ router.post("/dashboard", async (req, res) => {
       },
     ]);
 
+    let todoyTodoStats = Todo.aggregate([
+      {
+        $match: {
+          userid: ObjectId(userid),
+          deadline: { $gte: new Date(start), $lte: new Date(end) },
+        },
+      },
+      {
+        $facet: {
+          todo: [
+            {
+              $match: { status: 0 },
+            },
+            { $count: "todo" },
+          ],
+          doing: [
+            {
+              $match: { status: 1 },
+            },
+            { $count: "doing" },
+          ],
+          done: [
+            {
+              $match: { status: 2 },
+            },
+            { $count: "done" },
+          ],
+        },
+      },
+    ]);
+
     try {
-      let r_todoStats = await todoStats.exec();
-      let r_frequentProjects = await frequentProjects.exec();
+      let r_todoStats = await todoStats.exec(),
+        r_frequentProjects = await frequentProjects.exec(),
+        r_todayTodoStats = await todoyTodoStats.exec();
       let result = {};
       if (r_todoStats.length) {
         result["todoStats"] = r_todoStats[0];
@@ -591,6 +626,12 @@ router.post("/dashboard", async (req, res) => {
       } else {
         result["frequentProjects"] = [];
       }
+      if (r_todayTodoStats.length) {
+        result["todayTodoStats"] = r_todayTodoStats[0];
+      } else {
+        result["todayTodoStats"] = [];
+      }
+      console.log(result);
       return res.json({
         type: "dashboard",
         message: result,
