@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "now-start": "node index.js",
     "server": "nodemon index.js",
     "client": "cd client && yarn run start",
     "dev": "concurrently -n Server,Yata \"set \"NODE_ENV=dev\" && yarn run server\" \"set \"NODE_ENV=dev\" && yarn run client\" ",
@@ -28,6 +27,6 @@
     "validator": "^13.0.0"
   },
   "engines": {
-    "node": "12.9.1"
+    "node": "12.x"
   }
 }
