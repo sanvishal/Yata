@@ -133,7 +133,7 @@ class Sidebar extends Component {
 
   changeMode(e, mode) {
     this.props.setMode(mode);
-    console.log(this.props.projects);
+    // console.log(this.props.projects);
     this.setState({ currentProject: {} });
   }
 

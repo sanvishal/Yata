@@ -55,51 +55,59 @@ class Navbar extends Component {
                     </Link>
                   </>
                 ) : (
-                  <div
-                    className={
-                      "dropdown is-right" +
-                      (this.state.dropdownOpen ? " is-active" : "")
-                    }
-                    onClick={(e) => this.toggleDropdown(e)}
-                    onBlur={(e) => this.toggleDropdown(e)}
-                  >
-                    <div className="dropdown-trigger">
-                      <Gravatar
-                        email={auth.user.email}
-                        className="profile-pic"
-                        size={25}
-                      />
-                      <div
-                        style={{
-                          fontSize: "1em",
-                          color: "white",
-                          fontWeight: 700,
-                        }}
-                      >
-                        {auth.user.name}
-                      </div>
-                      <div class="dropdown-icon">
-                        <ChevronDown />
-                      </div>
-                    </div>
-                    <div
-                      class="dropdown-menu"
-                      id="dropdown-menu-nav"
-                      role="menu"
+                  <>
+                    <Link
+                      to="/workspace"
+                      style={{ marginRight: "12px", marginTop: "12px" }}
                     >
-                      <div className="dropdown-content">
-                        <a
-                          onClick={(e) => this.onClickLogout(e)}
-                          class="dropdown-item"
+                      <a className="button">My Workspace</a>
+                    </Link>
+                    <div
+                      className={
+                        "dropdown is-right" +
+                        (this.state.dropdownOpen ? " is-active" : "")
+                      }
+                      onClick={(e) => this.toggleDropdown(e)}
+                      onBlur={(e) => this.toggleDropdown(e)}
+                    >
+                      <div className="dropdown-trigger">
+                        <Gravatar
+                          email={auth.user.email}
+                          className="profile-pic"
+                          size={25}
+                        />
+                        <div
+                          style={{
+                            fontSize: "1em",
+                            color: "white",
+                            fontWeight: 700,
+                          }}
                         >
-                          <span>
-                            <LogOut />
-                          </span>
-                          Logout
-                        </a>
+                          {auth.user.name}
+                        </div>
+                        <div class="dropdown-icon">
+                          <ChevronDown />
+                        </div>
+                      </div>
+                      <div
+                        class="dropdown-menu"
+                        id="dropdown-menu-nav"
+                        role="menu"
+                      >
+                        <div className="dropdown-content">
+                          <a
+                            onClick={(e) => this.onClickLogout(e)}
+                            class="dropdown-item"
+                          >
+                            <span>
+                              <LogOut />
+                            </span>
+                            Logout
+                          </a>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </>
                 )}
               </div>
             </div>

@@ -29,7 +29,7 @@ router.options("*", (req, res, next) => {
 
 router.post("/register", (req, res) => {
   const { errors, isValid } = validators.validateRegisterData(req.body);
-  console.log(req.body);
+  // console.log(req.body);
 
   if (!isValid) {
     return res

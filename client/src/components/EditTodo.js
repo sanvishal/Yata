@@ -280,7 +280,13 @@ class EditTodo extends Component {
   };
 
   saveEditedTodo = async () => {
-    if (!deepCompare(this.state.selectedTodo, this.state.editedTodo)) {
+    const { selectedTodo, editedTodo } = this.state;
+    if (
+      selectedTodo.task !== editedTodo.task ||
+      selectedTodo.deadline !== editedTodo.deadline ||
+      !deepCompare(selectedTodo, editedTodo) ||
+      selectedTodo.status !== editedTodo.status
+    ) {
       await this.addNonExistingProjects();
       await this._saveEditedTodo();
     } else {

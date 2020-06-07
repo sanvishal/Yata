@@ -57,10 +57,14 @@ class MainContent extends Component {
         projectid: this.props.projects.selectedProject.id,
       },
       (res) => {
-        this.getPercentageCompletion(
-          res.data.message.done,
-          res.data.message.total
-        );
+        if (Object.keys(res.data).length === 3) {
+          this.getPercentageCompletion(
+            res.data.message.done,
+            res.data.message.total
+          );
+        } else {
+          this.getPercentageCompletion(0, 1);
+        }
       }
     );
   };
@@ -107,13 +111,13 @@ class MainContent extends Component {
     const { selectedProject } = this.props.projects;
     const { projects } = new_todo;
     let newTodos = this.props.todos.todos;
-    projects.forEach((project) => {
+    for (let project of projects) {
       if (selectedProject.projectid === project._id) {
         newTodos.push(new_todo);
         this.props.todos.todos = newTodos;
-        return;
+        break;
       }
-    });
+    }
   }
 
   updatePropsonTodoDelete(deleted_todo) {

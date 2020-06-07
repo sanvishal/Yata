@@ -22,7 +22,7 @@ function Register({ registerUser, auth, errors }) {
       password,
       password_again,
     };
-    console.log(newUser);
+    // console.log(newUser);
     setLoading(true);
     registerUser(newUser, history);
   }

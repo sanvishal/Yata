@@ -43,16 +43,11 @@ class Dashboard extends Component {
       (result) => {
         if (result) {
           if (result.status === "success") {
-            this.setState(
-              {
-                todoStats: result.message.todoStats,
-                frequentProjects: result.message.frequentProjects,
-                todayTodoStats: result.message.todayTodoStats,
-              },
-              () => {
-                console.log(this.state);
-              }
-            );
+            this.setState({
+              todoStats: result.message.todoStats,
+              frequentProjects: result.message.frequentProjects,
+              todayTodoStats: result.message.todayTodoStats,
+            });
           } else {
             Toast.fire({
               title: "Internal server error ;_;",

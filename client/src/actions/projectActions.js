@@ -113,7 +113,6 @@ export const getProgress = async (data, done) => {
   await axios
     .post(getPath("/api/projects/getprogress"), data, config)
     .then((res) => {
-      // console.log(res.data);
       return done(res);
     })
     .catch((err) => {

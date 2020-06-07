@@ -22,7 +22,7 @@ export const addTodo = (todo) => async (dispatch) => {
   await axios
     .post(getPath("/api/todos/addtodo"), todo, config)
     .then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       dispatch({
         type: ADD_TODO,
         payload: res.data.message,
@@ -55,7 +55,7 @@ export const getTodos = (userData) => async (dispatch) => {
   await axios
     .post(getPath("/api/todos/gettodos"), userData, config)
     .then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       dispatch({
         type: GET_TODOS,
         payload: res.data.message,

@@ -2,7 +2,8 @@ import React, { Component } from "react";
 
 class ProjectProgress extends Component {
   render() {
-    const { progress, color } = this.props;
+    let progress = this.props.progress || 0;
+    let color = this.props.color;
     return (
       <div
         className="project-progress"

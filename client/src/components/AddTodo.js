@@ -135,6 +135,26 @@ class AddTodo extends Component {
           ],
         });
       }
+
+      if (this.props.projects.selectedMode === "TODAY") {
+        this.onChangeDate(
+          new Date(
+            new Date().getFullYear(),
+            new Date().getMonth(),
+            new Date().getDate()
+          )
+        );
+      } else if (this.props.projects.selectedMode === "TOMORROW") {
+        this.onChangeDate(
+          new Date(
+            new Date().getFullYear(),
+            new Date().getMonth(),
+            new Date().getDate() + 1
+          )
+        );
+      } else {
+        this.setState({ deadline: "" });
+      }
     }
 
     if (
@@ -197,21 +217,43 @@ class AddTodo extends Component {
     });
   };
 
+  checkIfErrorOnAddingNonExistingProjects(linkedProjects) {
+    if (linkedProjects.length) {
+      linkedProjects.forEach((project) => {
+        if (!project.id) {
+          return false;
+        }
+      });
+      return true;
+    }
+    return true;
+  }
+
   _addTodo = async (e) => {
     if (this.state.task) {
+      this.setState({ addingTodo: true });
       await this.addNonExistingProjects();
-      let todoData = {
-        id: this.props.auth.user.id,
-        task: this.state.task,
-        projects: this.state.linkedProjects,
-        status: this.state.status,
-      };
-      if (this.state.status !== 2) {
-        todoData = { ...todoData, deadline: this.state.deadline };
-      }
+      if (
+        this.checkIfErrorOnAddingNonExistingProjects(this.state.linkedProjects)
+      ) {
+        let todoData = {
+          id: this.props.auth.user.id,
+          task: this.state.task,
+          projects: this.state.linkedProjects,
+          status: this.state.status,
+        };
+        if (this.state.status !== 2) {
+          todoData = { ...todoData, deadline: this.state.deadline };
+        }
 
-      await this.props.addTodo(todoData);
-      this.setState({ task: "", calendarOpen: false });
+        await this.props.addTodo(todoData);
+        this.setState({ task: "", calendarOpen: false, addingTodo: false });
+      } else {
+        this.setState({ task: "", calendarOpen: false, addingTodo: false });
+        Toast.fire({
+          title: "Error occured on adding new projects :(",
+        });
+      }
     } else {
       Toast.fire({
         title: "Enter a task!",
@@ -354,7 +396,7 @@ class AddTodo extends Component {
             <TextInput
               Component="input"
               trigger={this.checkTrigger()}
-              placeholder="Add a todo"
+              placeholder="Add a todo, type # to link to a tag"
               onChange={(val) => this.onChangeTask(val)}
               onClick={(e) => this.toggleOpen(e)}
               value={this.state.task}
@@ -385,8 +427,23 @@ class AddTodo extends Component {
             className="todo-buttons__add-todo"
             onClick={(e) => this._addTodo(e)}
           >
-            <span>Add</span>
-            <Check />
+            {this.state.addingTodo ? (
+              <div
+                className="loader"
+                style={{
+                  border: "3px solid #fff",
+                  borderRightColor: "transparent",
+                  borderTopColor: "transparent",
+                  height: "1.2em",
+                  width: "1.2em",
+                }}
+              ></div>
+            ) : (
+              <>
+                <span>Add</span>
+                <Check />
+              </>
+            )}
           </div>
         </div>
         {this.state.calendarOpen ? (

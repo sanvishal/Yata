@@ -154,7 +154,7 @@
     align-content: center;
     transition: all 0.3s ease-in-out;
 
-    div {
+    div:not(.loader) {
       height: 40px;
       margin-left: 20px;
       background-color: $bg-color-light;

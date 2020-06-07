@@ -1,0 +1,47 @@
+.landing {
+    height: 90vh;
+    overflow-y: scroll;
+    .header {
+        .logo {
+            margin-left: auto;
+            margin-right: auto;
+            width: 50px;
+            display: block;
+            margin-bottom: 30px;
+        }
+
+        .landing-img {
+            margin-left: auto;
+            margin-right: auto;
+            width: 30%;
+            display: block;
+        }
+
+        .nutshell {
+            font-family: "Poppins", monospace;
+            margin-top: 15px;
+            text-align: center;
+            font-size: 20px;
+            color: white;
+
+            span {
+                font-weight: bold;
+                display: inline-block;
+                transform: rotate(-4deg);
+                margin-left: 5px;
+                padding-left: 2px;
+                padding-right: 2px;
+                background-color: $cta-color;
+                border-radius: 2px;
+            }
+        }
+    }
+
+    .inst-img {
+        img {
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+    }
+}

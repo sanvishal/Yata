@@ -359,7 +359,7 @@ router.post("/edittodo", (req, res) => {
   let newtodo = req.body.newtodo;
   newtodo["archived"] = newtodo.archived || false;
 
-  console.log(newtodo);
+  // console.log(newtodo);
 
   if (!ObjectId.isValid(userid)) {
     return res.status(400).json({
@@ -419,7 +419,7 @@ router.post("/edittodo", (req, res) => {
 router.post("/archivetodo", (req, res) => {
   const { userid, todoid, archived } = req.body;
 
-  console.log(req.body);
+  // console.log(req.body);
 
   if (!ObjectId.isValid(userid)) {
     return res.status(400).json({
@@ -633,7 +633,7 @@ router.post("/dashboard", async (req, res) => {
       } else {
         result["todayTodoStats"] = [];
       }
-      console.log(result);
+      // console.log(result);
       return res.json({
         type: "dashboard",
         message: result,

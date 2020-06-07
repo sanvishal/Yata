@@ -18,7 +18,7 @@ function Login({ loginUser, auth, errors }) {
       email,
       password,
     };
-    console.log(user);
+    // console.log(user);
     setLoading(true);
     loginUser(user);
   }
