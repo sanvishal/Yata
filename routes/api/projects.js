@@ -67,7 +67,6 @@ router.post("/addproject", async (req, res) => {
                 });
               })
               .catch((err) => {
-                console.log(err);
                 return res.status(500).json({
                   type: "project",
                   message: "can't create your project :(",

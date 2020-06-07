@@ -86,9 +86,24 @@ class Dashboard extends Component {
             <div className="stat-title">
               Everything <Globe />
             </div>
-            <StatCard type="Todos" data={todo} color={"#aeaeae"}></StatCard>
-            <StatCard type="Doing" data={doing} color={"#ffbc26"}></StatCard>
-            <StatCard type="Done" data={done} color={"#adff2f"}></StatCard>
+            <StatCard
+              type="Todos"
+              data={todo}
+              color={"#aeaeae"}
+              animdelay={0.26}
+            ></StatCard>
+            <StatCard
+              type="Doing"
+              data={doing}
+              color={"#ffbc26"}
+              animdelay={0.33}
+            ></StatCard>
+            <StatCard
+              type="Done"
+              data={done}
+              color={"#adff2f"}
+              animdelay={0.4}
+            ></StatCard>
           </div>
         </div>
       );
@@ -109,9 +124,24 @@ class Dashboard extends Component {
             <div className="stat-title">
               Today <Star />
             </div>
-            <StatCard type="Todos" data={todo} color={"#aeaeae"}></StatCard>
-            <StatCard type="Doing" data={doing} color={"#ffbc26"}></StatCard>
-            <StatCard type="Done" data={done} color={"#adff2f"}></StatCard>
+            <StatCard
+              type="Todos"
+              data={todo}
+              color={"#aeaeae"}
+              animdelay={0.05}
+            ></StatCard>
+            <StatCard
+              type="Doing"
+              data={doing}
+              color={"#ffbc26"}
+              animdelay={0.12}
+            ></StatCard>
+            <StatCard
+              type="Done"
+              data={done}
+              color={"#adff2f"}
+              animdelay={0.19}
+            ></StatCard>
           </div>
         </div>
       );
@@ -129,14 +159,16 @@ class Dashboard extends Component {
             <div className="stat-title">
               Favorite tags <Heart />
             </div>
-            {frequentProjects.map((project) => {
+            {frequentProjects.map((project, key) => {
               if (project.project.length) {
                 const { projectname, color } = project.project[0];
                 return (
                   <StatCard
                     type={"#" + projectname}
+                    data={project.count}
                     color={color}
                     projectObj={project.project[0]}
+                    animdelay={0.4 + key / 10}
                   />
                 );
               } else {
@@ -204,11 +236,12 @@ const StatCardComp = ({
   projectObj,
   setProject,
   setMode,
+  animdelay,
 }) => {
   return (
     <div
-      className="stat-card"
-      style={{ backgroundColor: color + "10" }}
+      className="stat-card fadeInUp"
+      style={{ backgroundColor: color + "10", animationDelay: animdelay + "s" }}
       onClick={(e) => {
         projectObj["id"] = projectObj._id;
         setMode("PROJECTS");

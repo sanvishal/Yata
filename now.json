@@ -8,6 +8,11 @@
       "methods": ["POST", "OPTIONS", "GET"]
     },
     {
+      "src": "/api/users/register",
+      "dest": "/index.js",
+      "methods": ["POST", "OPTIONS", "GET"]
+    },
+    {
       "src": "/api/projects/getprojects",
       "dest": "/index.js",
       "methods": ["POST", "OPTIONS", "GET"]
@@ -23,6 +28,11 @@
       "methods": ["POST", "OPTIONS", "GET"]
     },
     {
+      "src": "/api/projects/deleteproject",
+      "dest": "/index.js",
+      "methods": ["POST", "OPTIONS", "GET"]
+    },
+    {
       "src": "/api/todos/addtodo",
       "dest": "/index.js",
       "methods": ["POST", "OPTIONS", "GET"]
@@ -34,6 +44,36 @@
     },
     {
       "src": "/api/todos/setstatus",
+      "dest": "/index.js",
+      "methods": ["POST", "OPTIONS", "GET"]
+    },
+    {
+      "src": "/api/todos/gettodosbydate",
+      "dest": "/index.js",
+      "methods": ["POST", "OPTIONS", "GET"]
+    },
+    {
+      "src": "/api/todos/getuntrackedtodos",
+      "dest": "/index.js",
+      "methods": ["POST", "OPTIONS", "GET"]
+    },
+    {
+      "src": "/api/todos/edittodo",
+      "dest": "/index.js",
+      "methods": ["POST", "OPTIONS", "GET"]
+    },
+    {
+      "src": "/api/todos/archivetodo",
+      "dest": "/index.js",
+      "methods": ["POST", "OPTIONS", "GET"]
+    },
+    {
+      "src": "/api/todos/deletetodo",
+      "dest": "/index.js",
+      "methods": ["POST", "OPTIONS", "GET"]
+    },
+    {
+      "src": "/api/todos/dashboard",
       "dest": "/index.js",
       "methods": ["POST", "OPTIONS", "GET"]
     }

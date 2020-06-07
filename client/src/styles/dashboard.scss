@@ -23,7 +23,7 @@
       display: flex;
       flex-direction: column;
       flex-wrap: nowrap;
-      justify-content: center;
+      // justify-content: center;
       align-items: center;
       align-content: center;
       margin-top: 30px;
@@ -91,11 +91,17 @@
 
     .stat-card {
       overflow: hidden;
-      transform: scale(1);
-      transition: all 0.3s ease-in-out;
+
+      .data {
+        text-align: left !important;
+        margin-left: 10px;
+      }
       .accent-icon {
+        transform-origin: 50% 50%;
         margin-left: 200px !important;
         margin-top: 50px !important;
+        transform: scale(1);
+        transition: all 0.3s ease-in-out;
         svg {
           width: 100px !important;
           height: 100px !important;
@@ -103,7 +109,9 @@
       }
 
       &:hover {
-        transform: scale(1.05);
+        .accent-icon {
+          transform: scale(1.5);
+        }
       }
     }
   }

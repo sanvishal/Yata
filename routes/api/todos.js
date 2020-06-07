@@ -531,6 +531,7 @@ router.post("/dashboard", async (req, res) => {
       {
         $match: {
           userid: ObjectId(userid),
+          archived: false,
         },
       },
       {
@@ -558,7 +559,7 @@ router.post("/dashboard", async (req, res) => {
     ]);
 
     let frequentProjects = Todo.aggregate([
-      { $match: { userid: ObjectId(userid) } },
+      { $match: { userid: ObjectId(userid), archived: false } },
       { $unwind: "$projects" },
       { $group: { _id: "$projects.projectid", count: { $sum: 1 } } },
       { $sort: { count: -1 } },
@@ -585,6 +586,7 @@ router.post("/dashboard", async (req, res) => {
         $match: {
           userid: ObjectId(userid),
           deadline: { $gte: new Date(start), $lte: new Date(end) },
+          archived: false,
         },
       },
       {

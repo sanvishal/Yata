@@ -18,11 +18,10 @@ app.use(
 app.use(bodyParser.json());
 
 const mongoURI = require("./config/keys").mongoURI;
-
 mongoose
   .connect(mongoURI, {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
+    useUnifiedTopology: false,
   })
   .then(() =>
     console.log(
@@ -31,7 +30,9 @@ mongoose
   )
   .catch((err) =>
     console.warn(
-      "[ERR] There is something funky going on with the database connection ---->\n",
+      "[ERR] There is something funky going on with the database connection ----> " +
+        mongoURI +
+        "\n",
       err
     )
   );
@@ -39,9 +40,13 @@ mongoose
 app.use(passport.initialize());
 require("./config/passport")(passport);
 
+// app.options("*", (req, res, next) => {
+//   res.sendStatus(204);
+// });
+
 app.use(
   CORS({
-    allowedOrigins: ["localhost:*"],
+    allowedOrigins: ["localhost:*", "*.now.sh"],
     headers: ["X-Requested-With", "content-type", "x-access-token"],
     methods: ["GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"],
   })

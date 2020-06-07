@@ -9,22 +9,27 @@ const User = require("../../models/User");
 
 const router = express.Router();
 
-router.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "X-Requested-With,content-type,content-encoding,x-access-token"
-  );
-  res.setHeader("Access-Control-Allow-Credentials", true);
-  next();
+// router.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "*");
+//   res.setHeader(
+//     "Access-Control-Allow-Methods",
+//     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+//   );
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "X-Requested-With,content-type,content-encoding,x-access-token"
+//   );
+//   res.setHeader("Access-Control-Allow-Credentials", true);
+//   next();
+// });
+
+router.options("*", (req, res, next) => {
+  res.sendStatus(204);
 });
 
 router.post("/register", (req, res) => {
   const { errors, isValid } = validators.validateRegisterData(req.body);
+  console.log(req.body);
 
   if (!isValid) {
     return res
