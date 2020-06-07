@@ -238,9 +238,11 @@ const StatCardComp = ({
       className="stat-card fadeInUp"
       style={{ backgroundColor: color + "10", animationDelay: animdelay + "s" }}
       onClick={(e) => {
-        projectObj["id"] = projectObj._id;
-        setMode("PROJECTS");
-        setProject(projectObj);
+        if (type.startsWith("#")) {
+          projectObj["id"] = projectObj._id;
+          setMode("PROJECTS");
+          setProject(projectObj);
+        }
       }}
     >
       <div className="type" style={{ color: color + "FA" }}>
