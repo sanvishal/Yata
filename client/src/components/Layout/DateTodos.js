@@ -8,10 +8,11 @@ class DateTodos extends Component {
     todos: [],
   };
 
-  fetchTodosByDate = async (date) => {
+  fetchTodosByDate = async (start, end) => {
     await this.props.getTodosByDate({
       id: this.props.auth.user.id,
-      date,
+      start,
+      end,
     });
     this.setState({ todos: this.props.todos.todos });
   };
@@ -19,13 +20,22 @@ class DateTodos extends Component {
   fetchOnUpdate() {
     const { selectedMode } = this.props.projects;
     if (selectedMode === "TODAY") {
-      this.fetchTodosByDate(moment().startOf("day"));
+      this.fetchTodosByDate(
+        moment().startOf("day").toISOString(),
+        moment().endOf("day").toISOString()
+      );
     } else if (selectedMode === "TOMORROW") {
-      this.fetchTodosByDate(moment().startOf("day").add(1, "days"));
+      this.fetchTodosByDate(
+        moment().startOf("day").add(1, "days").toISOString(),
+        moment().endOf("day").add(1, "days").toISOString()
+      );
     } else if (selectedMode === "UPCOMING") {
       const { selectedDate } = this.props;
       if (selectedDate) {
-        this.fetchTodosByDate(moment(this.props.selectedDate).startOf("day"));
+        this.fetchTodosByDate(
+          moment(this.props.selectedDate).startOf("day").toISOString(),
+          moment(this.props.selectedDate).endOf("day").toISOString()
+        );
       }
     }
   }

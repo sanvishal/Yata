@@ -67,6 +67,7 @@ router.post("/addproject", async (req, res) => {
                 });
               })
               .catch((err) => {
+                console.log(err);
                 return res.status(500).json({
                   type: "project",
                   message: "can't create your project :(",
@@ -133,7 +134,7 @@ router.post("/getprojects", (req, res) => {
 router.post("/getprogress", (req, res) => {
   const { id, projectid } = req.body;
 
-  if (!ObjectId.isValid(projectid) || !ObjectId.isValid(projectid)) {
+  if (!ObjectId.isValid(projectid) || !ObjectId.isValid(id)) {
     return res.status(400).json({
       type: "project",
       message: "You are not authorised",

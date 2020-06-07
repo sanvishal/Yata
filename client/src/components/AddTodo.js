@@ -197,13 +197,6 @@ class AddTodo extends Component {
     });
   };
 
-  fetchTodosByDate = async (date) => {
-    await this.props.getTodosByDate({
-      id: this.props.auth.user.id,
-      date,
-    });
-  };
-
   _addTodo = async (e) => {
     if (this.state.task) {
       await this.addNonExistingProjects();

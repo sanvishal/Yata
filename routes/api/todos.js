@@ -251,10 +251,10 @@ router.post("/setstatus", (req, res) => {
 });
 
 router.post("/gettodosbydate", (req, res) => {
-  const { id, date } = req.body;
+  const { id, start, end } = req.body;
 
-  let start = moment(date).startOf("day").toISOString();
-  let end = moment(date).endOf("day").toISOString();
+  // let start = moment(date).startOf("day").toISOString();
+  // let end = moment(date).endOf("day").toISOString();
   // console.log(start, end);
   // let dateObj = new Date(date),
   //   lte = new Date(
